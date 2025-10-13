@@ -4,7 +4,7 @@ import com.example.project.database.entities.Account;
 import com.example.project.database.entities.ItemPost;
 import com.example.project.database.entities.PostType;
 import com.example.project.database.repositories.AccountRepository;
-import com.example.project.database.repositories.ItemPostsRepository;
+import com.example.project.database.repositories.ItemPostRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
 public class EntityInitializerService {
 
 	private AccountRepository accountRepository;
-	private ItemPostsRepository itemPostsRepository;
+	private ItemPostRepository itemPostRepository;
 
 	public static void reInitializeDatabase(EntityInitializerService entityInitializerService) {
 		entityInitializerService.clearDatabase();
@@ -34,7 +34,7 @@ public class EntityInitializerService {
 
 	@Transactional
 	public void clearDatabase() {
-		itemPostsRepository.deleteAll();
+		itemPostRepository.deleteAll();
 		accountRepository.deleteAll();
 	}
 
@@ -56,7 +56,7 @@ public class EntityInitializerService {
 	public void createItemPosts() {
 		var account = accountRepository.findAll().getFirst();
 
-		itemPostsRepository.save(ItemPost.builder()
+		itemPostRepository.save(ItemPost.builder()
 				.account(account)
 				.postType(PostType.LOST)
 				.title("Sample Item")

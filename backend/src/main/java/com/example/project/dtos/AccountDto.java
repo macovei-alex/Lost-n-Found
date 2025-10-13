@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Builder
 public class AccountDto {
 
