@@ -1,21 +1,31 @@
 package com.example.project;
 
+import com.example.project.services.EntityInitializerService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@RestController
 public class ProjectApplication {
+
+	@Value("${app.database.repopulate:false}")
+	private String repopulateDatabase;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectApplication.class, args);
 	}
 
-	@GetMapping("/test")
-	public String test() {
-		return "test";
+
+	@Bean
+	public CommandLineRunner reInitializeDatabase(EntityInitializerService entityInitializerService) {
+		return (_) -> {
+			if (repopulateDatabase.equals("true")) {
+				EntityInitializerService.reInitializeDatabase(entityInitializerService);
+			}
+		};
 	}
 
 }
