@@ -20,8 +20,8 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@OneToMany(fetch = FetchType.LAZY)
-	private List<ItemPost> itemPosts;
+	@OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+	private List<Post> posts;
 
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<Chat> chats;
@@ -35,12 +35,12 @@ public class Account {
 	@Column(nullable = false)
 	private String passwordHash;
 
-	@Column
+	@Column(nullable = false)
 	private String phoneNumber;
 
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
-	private String profileImageUrl;
+	private byte[] profileImageData;
 
 }

@@ -1,26 +1,27 @@
 package com.example.project.mappers;
 
-import com.example.project.database.entities.ItemPost;
-import com.example.project.dtos.ItemPostDto;
+import com.example.project.database.entities.Post;
+import com.example.project.dtos.PostDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ItemPostMapper {
+public class PostMapper {
 
-	public ItemPostDto fromEntity(ItemPost entity) {
+	public PostDto fromEntity(Post entity) {
 		if (entity == null) {
 			return null;
 		}
-		return ItemPostDto.builder()
+		return PostDto.builder()
 				.id(entity.getId())
+				.idAccount(entity.getAccount().getId())
+				.postType(entity.getPostType())
 				.title(entity.getTitle())
 				.itemDescription(entity.getItemDescription())
 				.location(entity.getLocation())
-				.imageUrl(entity.getImageUrl())
-				.postType(entity.getPostType())
 				.createdAt(entity.getCreatedAt())
 				.resolvedAt(entity.getResolvedAt())
-				.imageUrl(entity.getImageUrl())
+				.mainImageData(entity.getMainImageData())
+				.productLink(entity.getProductLink())
 				.build();
 	}
 

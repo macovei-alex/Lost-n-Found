@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ItemPostDto {
+public class PostDto {
 
 	private Integer id;
 	private Integer idAccount;
@@ -22,6 +22,7 @@ public class ItemPostDto {
 	private String location;
 	private LocalDateTime createdAt;
 	private LocalDateTime resolvedAt;
-	private String imageUrl;
+	private byte[] mainImageData;
+	private String productLink;
 
 }

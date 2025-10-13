@@ -7,21 +7,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ItemPost {
+public class Post {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@JoinColumn(name = "id_account", nullable = false)
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_account", nullable = false)
 	private Account account;
+
+	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+	private List<PostImage> images;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -41,6 +45,8 @@ public class ItemPost {
 
 	private LocalDateTime resolvedAt;
 
-	private String imageUrl;
+	private byte[] mainImageData;
+
+	private String productLink;
 
 }

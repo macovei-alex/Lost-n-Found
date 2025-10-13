@@ -18,7 +18,7 @@ public class AccountMapper {
 				.email(entity.getEmail())
 				.phoneNumber(entity.getPhoneNumber())
 				.createdAt(entity.getCreatedAt())
-				.profileImageUrl(entity.getProfileImageUrl())
+				.profileImageData(entity.getProfileImageData())
 				.build();
 	}
 

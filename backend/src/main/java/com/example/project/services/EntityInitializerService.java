@@ -1,10 +1,10 @@
 package com.example.project.services;
 
 import com.example.project.database.entities.Account;
-import com.example.project.database.entities.ItemPost;
+import com.example.project.database.entities.Post;
 import com.example.project.database.entities.PostType;
 import com.example.project.database.repositories.AccountRepository;
-import com.example.project.database.repositories.ItemPostRepository;
+import com.example.project.database.repositories.PostRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
 public class EntityInitializerService {
 
 	private AccountRepository accountRepository;
-	private ItemPostRepository itemPostRepository;
+	private PostRepository postRepository;
 
 	public static void reInitializeDatabase(EntityInitializerService entityInitializerService) {
 		entityInitializerService.clearDatabase();
@@ -34,14 +34,14 @@ public class EntityInitializerService {
 
 	@Transactional
 	public void clearDatabase() {
-		itemPostRepository.deleteAll();
+		postRepository.deleteAll();
 		accountRepository.deleteAll();
 	}
 
 	@Transactional
 	public void createAccounts() {
 		accountRepository.save(Account.builder()
-				.itemPosts(List.of())
+				.posts(List.of())
 				.chats(List.of())
 				.name("John Doe")
 				.email("test@email.com")
@@ -56,7 +56,7 @@ public class EntityInitializerService {
 	public void createItemPosts() {
 		var account = accountRepository.findAll().getFirst();
 
-		itemPostRepository.save(ItemPost.builder()
+		postRepository.save(Post.builder()
 				.account(account)
 				.postType(PostType.LOST)
 				.title("Sample Item")
