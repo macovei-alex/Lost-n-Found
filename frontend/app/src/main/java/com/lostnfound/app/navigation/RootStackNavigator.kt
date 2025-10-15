@@ -23,18 +23,18 @@ fun RootStackNavigator(rootNavController: NavHostController = rememberNavControl
   CompositionLocalProvider(LocalRootNavController provides rootNavController) {
     NavHost(
       navController = rootNavController,
-      startDestination = "tabs",
-      route = "root_stack",
+      startDestination = NavRoute.MainTabs.Root.route,
+      route = NavRoute.Root.route,
     ) {
-      composable("tabs") { MainTabsNavigator() }
-      composable("outside_of_tabs") { TestScreen() }
+      composable(NavRoute.MainTabs.Root.route) { MainTabsNavigator() }
+      composable(NavRoute.OutsideOfTabs.route) { TestScreen() }
     }
   }
 }
 
 @Composable
 fun TestScreen() {
-  val rootNavController = LocalRootNavController.current;
+  val rootNavController = LocalRootNavController.current
 
   Box(
     modifier = Modifier.fillMaxSize(),

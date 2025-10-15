@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.lostnfound.app.navigation.LocalRootNavController
+import com.lostnfound.app.navigation.NavRoute
 
 @Composable
 fun HomeScreen() {
@@ -17,8 +18,8 @@ fun HomeScreen() {
     modifier = Modifier.fillMaxSize(),
     contentAlignment = Alignment.Center
   ) {
-    Text(text = "👤 Profile Screen")
-    Button (onClick = { rootNavController.navigate("outside_of_tabs") }) {
+    Text(text = "Home Screen")
+    Button (onClick = { rootNavController.navigate(NavRoute.OutsideOfTabs.route) }) {
       Text("Go to outside of the tabs navigator")
     }
   }

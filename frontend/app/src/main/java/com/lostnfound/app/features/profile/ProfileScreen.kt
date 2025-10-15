@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.lostnfound.app.navigation.NavRoute
 
 @Composable
 fun ProfileScreen(tabsNavController: NavController) {
@@ -24,9 +25,9 @@ fun ProfileScreen(tabsNavController: NavController) {
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center
     ) {
-      Text(text = "👤 Profile Screen")
+      Text(text = "Profile Screen")
       Spacer(modifier = Modifier.height(16.dp))
-      Button(onClick = { tabsNavController.navigate("profile_second") }) {
+      Button(onClick = { tabsNavController.navigate(NavRoute.MainTabs.Profile.Second.route) }) {
         Text("Go to Second Screen")
       }
     }
