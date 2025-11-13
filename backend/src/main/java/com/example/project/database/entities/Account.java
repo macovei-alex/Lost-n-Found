@@ -41,6 +41,6 @@ public class Account {
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
-	private byte[] profileImageData;
+	private String profileImageName;
 
 }

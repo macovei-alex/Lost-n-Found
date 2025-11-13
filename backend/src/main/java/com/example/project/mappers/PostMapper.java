@@ -20,7 +20,7 @@ public class PostMapper {
 				.location(entity.getLocation())
 				.createdAt(entity.getCreatedAt())
 				.resolvedAt(entity.getResolvedAt())
-				.mainImageData(entity.getMainImageData())
+				.mainImageName(entity.getMainImageName())
 				.productLink(entity.getProductLink())
 				.build();
 	}

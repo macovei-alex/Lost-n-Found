@@ -45,7 +45,7 @@ public class Post {
 
 	private LocalDateTime resolvedAt;
 
-	private byte[] mainImageData;
+	private String mainImageName;
 
 	private String productLink;
 

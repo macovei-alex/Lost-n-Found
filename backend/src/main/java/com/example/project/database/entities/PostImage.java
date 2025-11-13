@@ -22,6 +22,6 @@ public class PostImage {
 	private Post post;
 
 	@Column(nullable = false)
-	private byte[] data;
+	private String imageName;
 
 }

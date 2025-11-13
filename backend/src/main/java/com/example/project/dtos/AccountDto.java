@@ -19,6 +19,6 @@ public class AccountDto {
 	private String passwordHash;
 	private String phoneNumber;
 	private LocalDateTime createdAt;
-	private byte[] profileImageData;
+	private String profileImageName;
 
 }

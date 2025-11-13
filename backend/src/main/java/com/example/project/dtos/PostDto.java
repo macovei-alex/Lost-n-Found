@@ -22,7 +22,7 @@ public class PostDto {
 	private String location;
 	private LocalDateTime createdAt;
 	private LocalDateTime resolvedAt;
-	private byte[] mainImageData;
+	private String mainImageName;
 	private String productLink;
 
 }

@@ -22,6 +22,6 @@ public class MessageImage {
 	private Message message;
 
 	@Column(nullable = false)
-	private byte[] data;
+	private String imageName;
 
 }
