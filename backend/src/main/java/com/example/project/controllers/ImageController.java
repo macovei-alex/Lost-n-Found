@@ -20,7 +20,7 @@ public class ImageController {
     @GetMapping("/{imageName}")
     public ResponseEntity<byte[]> getImage(
             @PathVariable String imageName,
-            @RequestParam(required = false, value = "v") long version
+            @RequestParam(required = false, value = "v") Long version
     ) throws FileNotFoundException {
         var image = imageService.loadImage(imageName);
         var headers = new HttpHeaders();
