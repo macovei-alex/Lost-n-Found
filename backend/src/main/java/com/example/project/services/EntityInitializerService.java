@@ -89,7 +89,7 @@ public class EntityInitializerService {
                 .createdAt(LocalDateTime.now())
                 .resolvedAt(null)
                 .mainImageName("laptop.jpeg")
-                .productLink(null)
+                .productLink("https://www.microsoft.com/en-us/surface/devices/surface-laptop")
                 .build();
 
         Post post4 = Post.builder()
@@ -101,7 +101,7 @@ public class EntityInitializerService {
                 .createdAt(LocalDateTime.now().minusHours(5))
                 .resolvedAt(null)
                 .mainImageName("pen.jpg")
-                .productLink("")
+                .productLink("https://thursdayboots.com/products/mens-perfecto-backpack-black-matte-leather?srsltid=AfmBOorkbxItBTpn363KKtF2uD5_zv06FqNg-r0BE_VwD6rH75WDtoKa")
                 .build();
 
         postRepository.saveAll(List.of(post1, post2, post3, post4));
