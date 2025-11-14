@@ -17,7 +17,7 @@ public class PostService {
 
 
 	public Page<PostDto> getAllPaged(int page, int pageSize) {
-		return postRepository.findAll(PageRequest.of(page, pageSize))
+		return postRepository.findAllNotResolved(PageRequest.of(page, pageSize))
 				.map(postMapper::fromEntity);
 	}
 
