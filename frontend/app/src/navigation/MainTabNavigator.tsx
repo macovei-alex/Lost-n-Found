@@ -32,6 +32,6 @@ const styles = StyleSheet.create((theme) => ({
   tabBar: {
     borderTopRightRadius: 16,
     borderTopLeftRadius: 16,
-    backgroundColor: theme.background.navbar,
+    backgroundColor: theme.colors.surfaceA20,
   },
 }));

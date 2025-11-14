@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { FlatList, ActivityIndicator, Text, View, RefreshControl } from "react-native";
+import { FlatList, ActivityIndicator, Text, View, RefreshControl, Button } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { infinitePostsQueryOptions } from "src/api/options/infinitePostsQueryOptions";
 import FeedListHeader from "src/components/FeedScreen/FeedHeader";
@@ -31,6 +31,7 @@ export default function FeedScreen() {
     return (
       <View style={styles.centered}>
         <Text>Error loading feed posts</Text>
+        <Button title="Retry" onPress={() => refetch()} />
       </View>
     );
   }
@@ -60,7 +61,7 @@ export default function FeedScreen() {
 const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
-    backgroundColor: theme.background.primary,
+    backgroundColor: theme.colors.surfaceA0,
   },
   centered: {
     flex: 1,

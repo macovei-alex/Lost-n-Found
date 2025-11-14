@@ -25,29 +25,29 @@ export default function PostCard({ post }: PostCardProps) {
 
 const styles = StyleSheet.create((theme) => ({
   postCard: {
-    backgroundColor: theme.background.card,
+    backgroundColor: theme.colors.surfaceA10,
     marginHorizontal: 16,
     marginVertical: 8,
     padding: 16,
     borderRadius: 12,
-    shadowColor: "#000",
+    shadowColor: theme.colors.text,
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 3,
   },
   title: {
-    color: theme.text.primary,
+    color: theme.colors.primaryA10,
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 4,
   },
   description: {
-    color: theme.text.secondary,
+    color: theme.colors.primaryA30,
     fontSize: 14,
     marginBottom: 4,
   },
   location: {
-    color: theme.text.secondary,
+    color: theme.colors.primaryA50,
     fontSize: 12,
   },
   image: {

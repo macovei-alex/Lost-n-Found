@@ -1,6 +1,8 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, withUnistyles } from "react-native-unistyles";
+
+const UMaterialIcons = withUnistyles(MaterialIcons);
 
 export default function FeedListHeader() {
   return (
@@ -9,11 +11,11 @@ export default function FeedListHeader() {
       <Text style={headerStyles.title}>Your Lost & Found Feed</Text>
       <View style={headerStyles.actionsContainer}>
         <TouchableOpacity style={headerStyles.filterButton} activeOpacity={0.75}>
-          <MaterialIcons name="filter-list" size={20} color="#fff" />
+          <UMaterialIcons name="filter-list" size={20} color="#fff" />
           <Text style={headerStyles.filterText}>Filter</Text>
         </TouchableOpacity>
         <TouchableOpacity style={headerStyles.sortButton} activeOpacity={0.75}>
-          <MaterialIcons name="sort" size={20} color="#fff" />
+          <UMaterialIcons name="sort" size={20} color="#fff" />
           <Text style={headerStyles.sortText}>Sort</Text>
         </TouchableOpacity>
       </View>
@@ -23,7 +25,7 @@ export default function FeedListHeader() {
 
 const headerStyles = StyleSheet.create((theme) => ({
   container: {
-    paddingTop: 24,
+    paddingTop: 32,
     paddingBottom: 8,
     paddingHorizontal: 16,
     borderBottomLeftRadius: 16,
@@ -32,13 +34,13 @@ const headerStyles = StyleSheet.create((theme) => ({
   },
   greeting: {
     fontSize: 16,
-    color: theme.text.secondary,
+    color: theme.colors.primaryA10,
     marginBottom: 4,
   },
   title: {
     fontSize: 26,
     fontWeight: "bold",
-    color: theme.text.primary,
+    color: theme.colors.primaryA10,
     marginBottom: 12,
   },
   actionsContainer: {
@@ -48,7 +50,7 @@ const headerStyles = StyleSheet.create((theme) => ({
   filterButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.background.accent,
+    backgroundColor: theme.colors.primaryA0,
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 12,
@@ -61,7 +63,7 @@ const headerStyles = StyleSheet.create((theme) => ({
   sortButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.background.accent,
+    backgroundColor: theme.colors.primaryA0,
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 12,
