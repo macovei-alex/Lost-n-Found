@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.7.3",

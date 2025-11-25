@@ -28,5 +28,4 @@ public class AccountService {
 				.map(accountMapper::fromEntity)
 				.toList();
 	}
-
 }

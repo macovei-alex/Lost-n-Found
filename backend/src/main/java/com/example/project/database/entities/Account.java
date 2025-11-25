@@ -5,16 +5,19 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Builder
-public class Account {
+@Getter
+public class Account implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +29,7 @@ public class Account {
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<Chat> chats;
 
-	@Column(nullable = false)
+    @Column(nullable = false)
 	private String name;
 
 	@Column(nullable = false, unique = true)
@@ -43,4 +46,34 @@ public class Account {
 
 	private String profileImageName;
 
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
+
+    public Account(String email, String name, String passwordHash, String phoneNumber, LocalDateTime createdAt)
+    {
+        this.email = email;
+        this.name = name;
+        this.passwordHash = passwordHash;
+        this.phoneNumber = phoneNumber;
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 }
