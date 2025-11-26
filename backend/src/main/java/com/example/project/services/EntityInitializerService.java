@@ -7,6 +7,8 @@ import com.example.project.database.repositories.AccountRepository;
 import com.example.project.database.repositories.PostRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ public class EntityInitializerService {
 
     private AccountRepository accountRepository;
     private PostRepository postRepository;
+    private PasswordEncoder passwordEncoder;
+
 
     public static void reInitializeDatabase(EntityInitializerService entityInitializerService) {
         entityInitializerService.clearDatabase();
@@ -47,7 +51,7 @@ public class EntityInitializerService {
                 .chats(List.of())
                 .name("John Doe")
                 .email("test@email.com")
-                .passwordHash("test")
+                .passwordHash(passwordEncoder.encode("test"))
                 .phoneNumber("123 456 7890")
                 .createdAt(LocalDateTime.now())
                 .build()

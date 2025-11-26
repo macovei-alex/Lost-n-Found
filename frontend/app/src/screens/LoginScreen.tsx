@@ -1,15 +1,9 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
 import { useAuthContext } from "src/context/AuthContext";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginStackParamList } from "src/navigation/LoginStackNavigator";
+import { ENV } from "src/config/env";
 
 type Props = NativeStackScreenProps<LoginStackParamList, "LoginScreen">;
 
@@ -40,7 +34,7 @@ export default function LoginScreen({ navigation }: Props) {
     setErrorMsg("");
 
     try {
-      const response = await fetch(`/auth/login`, {
+      const response = await fetch(`${ENV.API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -56,6 +50,7 @@ export default function LoginScreen({ navigation }: Props) {
       await login(data.token);
     } catch (e) {
       setErrorMsg("Server error");
+      console.error(e);
     }
 
     setLoading(false);
@@ -85,11 +80,7 @@ export default function LoginScreen({ navigation }: Props) {
         />
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Login</Text>
-          )}
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>

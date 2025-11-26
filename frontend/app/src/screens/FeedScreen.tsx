@@ -4,8 +4,10 @@ import { StyleSheet } from "react-native-unistyles";
 import { infinitePostsQueryOptions } from "src/api/options/infinitePostsQueryOptions";
 import FeedListHeader from "src/components/FeedScreen/FeedHeader";
 import PostCard from "src/components/FeedScreen/PostCard";
+import { useAuthContext } from "src/context/AuthContext";
 
 export default function FeedScreen() {
+  const { api } = useAuthContext();
   const {
     data,
     fetchNextPage,
@@ -16,7 +18,7 @@ export default function FeedScreen() {
     refetch,
     isRefetching,
     error,
-  } = useInfiniteQuery(infinitePostsQueryOptions(12));
+  } = useInfiniteQuery(infinitePostsQueryOptions(api, 12));
 
   if (isLoading || isRefetching) {
     return (
@@ -27,7 +29,7 @@ export default function FeedScreen() {
   }
 
   if (isError || !data) {
-    console.error("Error fetching feed posts: ", error);
+    console.error("Error fetching feed posts:", error);
     return (
       <View style={styles.centered}>
         <Text>Error loading feed posts</Text>
