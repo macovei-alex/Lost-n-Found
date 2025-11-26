@@ -11,11 +11,13 @@ import { useAuthContext } from "src/context/AuthContext";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginStackParamList } from "src/navigation/LoginStackNavigator";
 
-type Props = NativeStackScreenProps<LoginStackParamList, "LoginScreen">;
+type Props = NativeStackScreenProps<LoginStackParamList, "RegisterScreen">;
 
-export default function LoginScreen({ navigation }: Props) {
+export default function RegisterScreen({ navigation }: Props) {
   const { login } = useAuthContext();
 
+  const [username, setUsername] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,13 +25,16 @@ export default function LoginScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
+    if (!username.trim()) return "Name is required";
+    if (!phoneNumber.trim()) return "Phone number is required";
+    if (phoneNumber.length < 10) return "Invalid phone number";
     if (!email.trim()) return "Email is required";
     if (!/\S+@\S+\.\S+/.test(email)) return "Invalid email";
-    if (!password.trim()) return "Password is required";
+    if (password.length < 6) return "Password must be at least 6 characters";
     return "";
   };
 
-  const handleLogin = async () => {
+  const register = async () => {
     const v = validate();
     if (v) {
       setErrorMsg(v);
@@ -40,19 +45,26 @@ export default function LoginScreen({ navigation }: Props) {
     setErrorMsg("");
 
     try {
-      const response = await fetch(`/auth/login`, {
+      const response = await fetch(`/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, phoneNumber, email, password }),
+      });
+
+      if (!response.ok) {
+        setErrorMsg("Failed to create account");
+        setLoading(false);
+        return;
+      }
+
+      // Auto-login
+      const loginResponse = await fetch(`/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) {
-        setErrorMsg("Incorrect email or password");
-        setLoading(false);
-        return;
-      }
-
-      const data = await response.json();
+      const data = await loginResponse.json();
       await login(data.token);
     } catch (e) {
       setErrorMsg("Server error");
@@ -64,15 +76,30 @@ export default function LoginScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Login</Text>
+        <Text style={styles.title}>Create Account</Text>
 
         {errorMsg ? <Text style={styles.error}>{errorMsg}</Text> : null}
 
         <TextInput
           style={styles.input}
+          placeholder="Name"
+          value={username}
+          onChangeText={setUsername}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Phone"
+          keyboardType="phone-pad"
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
+        />
+
+        <TextInput
+          style={styles.input}
           placeholder="Email"
-          autoCapitalize="none"
           value={email}
+          autoCapitalize="none"
           onChangeText={setEmail}
         />
 
@@ -84,17 +111,17 @@ export default function LoginScreen({ navigation }: Props) {
           onChangeText={setPassword}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={register}>
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>Sign Up</Text>
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.footerText}>
-            Don't have an account? <Text style={styles.link}>Sign Up</Text>
+            Already have an account? <Text style={styles.link}>Log In</Text>
           </Text>
         </TouchableOpacity>
       </View>
@@ -104,8 +131,18 @@ export default function LoginScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", alignItems: "center" },
-  card: { width: "90%", padding: 24, backgroundColor: "#fff", borderRadius: 16 },
-  title: { fontSize: 26, fontWeight: "600", marginBottom: 16, textAlign: "center" },
+  card: {
+    width: "90%",
+    padding: 24,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "600",
+    marginBottom: 16,
+    textAlign: "center",
+  },
   error: { color: "red", textAlign: "center", marginBottom: 12 },
   input: {
     height: 48,
@@ -119,7 +156,12 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 10,
   },
-  buttonText: { color: "#fff", textAlign: "center", fontWeight: "600", fontSize: 18 },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: 18,
+  },
   footerText: { textAlign: "center", marginTop: 16 },
   link: { color: "#0066FF", fontWeight: "600" },
 });
