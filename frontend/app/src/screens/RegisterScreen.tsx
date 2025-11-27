@@ -10,6 +10,7 @@ import {
 import { useAuthContext } from "src/context/AuthContext";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginStackParamList } from "src/navigation/LoginStackNavigator";
+import { ENV } from "src/config/env";
 
 type Props = NativeStackScreenProps<LoginStackParamList, "RegisterScreen">;
 
@@ -45,7 +46,7 @@ export default function RegisterScreen({ navigation }: Props) {
     setErrorMsg("");
 
     try {
-      const response = await fetch(`/auth/signup`, {
+      const response = await fetch(`${ENV.API_BASE_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, phoneNumber, email, password }),
@@ -58,7 +59,7 @@ export default function RegisterScreen({ navigation }: Props) {
       }
 
       // Auto-login
-      const loginResponse = await fetch(`/auth/login`, {
+      const loginResponse = await fetch(`${ENV.API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
