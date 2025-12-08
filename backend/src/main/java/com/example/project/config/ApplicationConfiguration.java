@@ -1,6 +1,8 @@
 package com.example.project.config;
 
 import com.example.project.database.repositories.AccountRepository;
+import jakarta.servlet.Filter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.filter.AbstractRequestLoggingFilter;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -42,5 +45,14 @@ public class ApplicationConfiguration {
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
+    }
+
+    @Bean
+    public FilterRegistrationBean<AbstractRequestLoggingFilter> customRequestLoggingFilter() {
+        FilterRegistrationBean<AbstractRequestLoggingFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new CustomRequestLoggingFilter());
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(1);
+        return registrationBean;
     }
 }
