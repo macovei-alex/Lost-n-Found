@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet } from "react-native-unistyles";
 import { View } from "react-native";
 import FeedScreen from "src/screens/FeedScreen";
+import ChatStackNavigator from "./ChatStackNavigator";
 
 export type MainTabParamList = {};
 
@@ -21,6 +22,14 @@ export default function MainTabNavigator() {
         component={FeedScreen}
         options={{
           title: "Feed",
+          tabBarIcon: ({ focused, color, size }) => <></>,
+        }}
+      />
+      <MainTab.Screen
+        name="Chat"
+        component={ChatStackNavigator}
+        options={{
+          title: "Chat",
           tabBarIcon: ({ focused, color, size }) => <></>,
         }}
       />
