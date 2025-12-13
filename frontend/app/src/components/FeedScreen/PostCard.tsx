@@ -1,16 +1,18 @@
 import { Image } from "expo-image";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { Text } from "src/components/ui";
 import { StyleSheet } from "react-native-unistyles";
-import { FeedPost } from "src/api/types/FeedPost";
+import { Post } from "src/api/types/Post";
 import { ENV } from "src/config/env";
 
 type PostCardProps = {
-  post: FeedPost;
+  post: Post;
+  onNavigate?: () => void;
 };
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, onNavigate }: PostCardProps) {
   return (
-    <View style={styles.postCard}>
+    <View style={styles.postCard} onTouchEnd={onNavigate}>
       <Text style={styles.title}>{post.title}</Text>
       <Text style={styles.description}>{post.itemDescription}</Text>
       <Text style={styles.location}>{post.location}</Text>
@@ -51,9 +53,8 @@ const styles = StyleSheet.create((theme) => ({
     fontSize: 12,
   },
   image: {
-    width: "100%",
     height: 200,
     marginTop: 8,
-    borderRadius: 8,
+    borderRadius: 12,
   },
 }));

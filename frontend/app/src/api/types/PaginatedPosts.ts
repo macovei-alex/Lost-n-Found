@@ -1,8 +1,8 @@
 import z from "zod";
-import { FeedPostSchema } from "./FeedPost";
+import { PostSchema } from "./Post";
 
 export const PaginatedPostsSchema = z.object({
-  content: z.array(FeedPostSchema),
+  content: z.array(PostSchema),
   page: z.object({
     size: z.number(),
     number: z.number(),

@@ -1,12 +1,19 @@
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { FlatList, ActivityIndicator, Text, View, RefreshControl, Button } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { infinitePostsQueryOptions } from "src/api/options/infinitePostsQueryOptions";
 import FeedListHeader from "src/components/FeedScreen/FeedHeader";
 import PostCard from "src/components/FeedScreen/PostCard";
+import { ScreenActivityIndicator } from "src/components/ui";
 import { useAuthContext } from "src/context/AuthContext";
+import { PostsStackParamList } from "src/navigation/PostsStackNavigator";
+
+type NavigationProps = NativeStackNavigationProp<PostsStackParamList, "FeedScreen">;
 
 export default function FeedScreen() {
+  const { navigate } = useNavigation<NavigationProps>();
   const { api } = useAuthContext();
   const {
     data,
@@ -21,11 +28,7 @@ export default function FeedScreen() {
   } = useInfiniteQuery(infinitePostsQueryOptions(api, 12));
 
   if (isLoading || isRefetching) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <ScreenActivityIndicator />;
   }
 
   if (isError || !data) {
@@ -45,7 +48,9 @@ export default function FeedScreen() {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PostCard post={item} />}
+        renderItem={({ item }) => (
+          <PostCard post={item} onNavigate={() => navigate("FullPostScreen", { postId: item.id })} />
+        )}
         onEndReached={() => {
           if (hasNextPage) fetchNextPage();
         }}
@@ -54,7 +59,7 @@ export default function FeedScreen() {
         ListFooterComponent={
           isFetchingNextPage ? <ActivityIndicator style={styles.bottomActivityIndicator} /> : null
         }
-        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
       />
     </View>
   );

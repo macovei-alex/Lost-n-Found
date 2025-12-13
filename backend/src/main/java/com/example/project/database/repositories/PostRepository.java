@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
@@ -17,4 +19,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             """)
     Page<Post> findAllNotResolved(Pageable pageable);
 
+    @Query("""
+            SELECT p FROM Post p
+            LEFT JOIN FETCH p.images
+            WHERE p.id = :id
+            """)
+    Optional<Post> findByIdPreloadImages(Integer id);
 }

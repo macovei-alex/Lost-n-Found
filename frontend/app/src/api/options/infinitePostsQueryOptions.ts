@@ -1,5 +1,5 @@
 import { infiniteQueryOptions } from "@tanstack/react-query";
-import { PaginatedPostsSchema } from "../types/PaginatedPosts";
+import { PaginatedPostsSchema } from "src/api/types/PaginatedPosts";
 import { API } from "src/context/AuthContext";
 
 export function infinitePostsQueryOptions(api: API, pageSize: number) {

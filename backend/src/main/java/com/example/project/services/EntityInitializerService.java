@@ -2,12 +2,13 @@ package com.example.project.services;
 
 import com.example.project.database.entities.Account;
 import com.example.project.database.entities.Post;
+import com.example.project.database.entities.PostImage;
 import com.example.project.database.entities.PostType;
 import com.example.project.database.repositories.AccountRepository;
+import com.example.project.database.repositories.PostImageRepository;
 import com.example.project.database.repositories.PostRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +23,10 @@ import java.util.stream.IntStream;
 @Slf4j
 public class EntityInitializerService {
 
-    private AccountRepository accountRepository;
-    private PostRepository postRepository;
-    private PasswordEncoder passwordEncoder;
+    private final PostImageRepository postImageRepository;
+    private final AccountRepository accountRepository;
+    private final PostRepository postRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     public static void reInitializeDatabase(EntityInitializerService entityInitializerService) {
@@ -87,17 +89,6 @@ public class EntityInitializerService {
                         .build(),
                 Post.builder()
                         .account(account)
-                        .postType(PostType.FOUND)
-                        .title("Found Laptop")
-                        .itemDescription("Found a blue laptop around the sports field. Looking for the owner.")
-                        .location("Sports Field, Campus")
-                        .createdAt(LocalDateTime.now())
-                        .resolvedAt(null)
-                        .mainImageName("laptop.jpeg")
-                        .productLink("https://www.microsoft.com/en-us/surface/devices/surface-laptop")
-                        .build(),
-                Post.builder()
-                        .account(account)
                         .postType(PostType.LOST)
                         .title("Lost Blue Fountain Pen")
                         .itemDescription("Lost a black fountain pen with gold trim. Last seen in lecture hall B during the morning class.")
@@ -116,5 +107,21 @@ public class EntityInitializerService {
                 .toList();
 
         postRepository.saveAll(duplicatedPosts);
+
+        var postWithImages = Post.builder()
+                .account(account)
+                .postType(PostType.FOUND)
+                .title("Found Laptop")
+                .itemDescription("Found a blue laptop around the sports field. Looking for the owner.")
+                .location("Sports Field, Campus")
+                .createdAt(LocalDateTime.now())
+                .resolvedAt(null)
+                .mainImageName("laptop.jpeg")
+                .productLink("https://www.microsoft.com/en-us/surface/devices/surface-laptop")
+                .build();
+        postRepository.save(postWithImages);
+
+        postImageRepository.save(PostImage.builder().post(postWithImages).imageName("laptop.jpeg").build());
+        postImageRepository.save(PostImage.builder().post(postWithImages).imageName("laptop.jpeg").build());
     }
 }
