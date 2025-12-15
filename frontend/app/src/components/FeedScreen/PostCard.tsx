@@ -5,6 +5,7 @@ import { FeedPost } from "src/api/types/FeedPost";
 import { ENV } from "src/config/env";
 import { useAuthContext } from "src/context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 
 type PostCardProps = {
   post: FeedPost;
@@ -13,22 +14,26 @@ type PostCardProps = {
 export default function PostCard({ post }: PostCardProps) {
   const { api, token } = useAuthContext();
   const navigation = useNavigation<any>();
+  const [loading, setLoading] = useState(false);
 
   const handleChatPress = async () => {
+    setLoading(true);
     try {
-      const currentUserId = parseInt(JSON.parse(atob(token!.split(".")[1])).sub);
-
-      const response = await api(
+      const meResponse = await api("/accounts/me");
+      const currentUser = await meResponse.json();
+      const currentUserId = currentUser.id;
+      const chatResponse = await api(
         `/chats/get-or-create?account1Id=${currentUserId}&account2Id=${post.idAccount}`
       );
-      const chat = await response.json();
-
+      const chat = await chatResponse.json();
       navigation.navigate("Chat", {
         screen: "ChatRoomScreen",
         params: { chatId: chat.id, chatTitle: post.title },
       });
     } catch (err) {
       console.error("Error creating chat:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
