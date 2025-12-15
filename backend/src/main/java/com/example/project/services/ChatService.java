@@ -44,4 +44,10 @@ public class ChatService {
     public List<Message> getMessages(Chat chat) {
         return messageRepository.findByChatOrderBySentAtAsc(chat);
     }
+
+    public Chat getOrCreateChat(Account account1, Account account2) {
+        return chatRepository.findByAccount1AndAccount2(account1, account2)
+                .or(() -> chatRepository.findByAccount1AndAccount2(account2, account1))
+                .orElseGet(() -> createChat(account1, account2));
+    }
 }
