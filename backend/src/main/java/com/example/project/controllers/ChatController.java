@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/chats")
+@RequestMapping("/chats")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -54,5 +54,16 @@ public class ChatController {
         Account sender = new Account(); sender.setId(senderId);
         Message message = chatService.sendMessage(chat, sender, text);
         return ChatMapper.toDTO(message);
+    }
+
+    @GetMapping("/get-or-create")
+    public ChatDTO getOrCreateChat(
+            @RequestParam Integer account1Id,
+            @RequestParam Integer account2Id
+    ) {
+        Account account1 = new Account(); account1.setId(account1Id);
+        Account account2 = new Account(); account2.setId(account2Id);
+        Chat chat = chatService.getOrCreateChat(account1, account2);
+        return ChatMapper.toDTO(chat);
     }
 }

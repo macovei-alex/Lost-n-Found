@@ -10,7 +10,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   login: (token: string) => Promise<void>;
   logout: () => Promise<void>;
-  api: API;
+  api: API & { token?: string };
 };
 
 const JwtSchema = z.object({

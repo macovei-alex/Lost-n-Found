@@ -1,14 +1,37 @@
 import { Image } from "expo-image";
-import { Text, View } from "react-native";
+import { Text, View, Button } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { FeedPost } from "src/api/types/FeedPost";
 import { ENV } from "src/config/env";
+import { useAuthContext } from "src/context/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 
 type PostCardProps = {
   post: FeedPost;
 };
 
 export default function PostCard({ post }: PostCardProps) {
+  const { api, token } = useAuthContext();
+  const navigation = useNavigation<any>();
+
+  const handleChatPress = async () => {
+    try {
+      const currentUserId = parseInt(JSON.parse(atob(token!.split(".")[1])).sub);
+
+      const response = await api(
+        `/chats/get-or-create?account1Id=${currentUserId}&account2Id=${post.idAccount}`
+      );
+      const chat = await response.json();
+
+      navigation.navigate("Chat", {
+        screen: "ChatRoomScreen",
+        params: { chatId: chat.id, chatTitle: post.title },
+      });
+    } catch (err) {
+      console.error("Error creating chat:", err);
+    }
+  };
+
   return (
     <View style={styles.postCard}>
       <Text style={styles.title}>{post.title}</Text>
@@ -19,6 +42,7 @@ export default function PostCard({ post }: PostCardProps) {
         style={styles.image}
         contentFit="contain"
       />
+      <Button title="Message Seller" onPress={handleChatPress} />
     </View>
   );
 }
