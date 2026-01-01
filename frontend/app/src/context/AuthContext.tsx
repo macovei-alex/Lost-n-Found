@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ENV } from "src/config/env";
 import z from "zod";
@@ -10,7 +10,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   login: (token: string) => Promise<void>;
   logout: () => Promise<void>;
-  api: API & { token?: string };
+  api: API;
 };
 
 const JwtSchema = z.object({
@@ -55,10 +55,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const api = async (url: string, options: RequestInit = {}) => {
+    const isFormData = options.body instanceof FormData;
+
     const response = await fetch(`${ENV.API_BASE_URL}${url}`, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": isFormData ? "multipart/form-data" : "application/json",
         ...(options.headers || {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },

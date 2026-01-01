@@ -2,10 +2,12 @@ import { z } from "zod";
 
 export const PostIdSchema = z.number();
 
+export const POST_TYPES = ["LOST", "FOUND"] as const;
+
 export const PostSchema = z.object({
   id: PostIdSchema,
   idAccount: z.number(),
-  postType: z.enum(["LOST", "FOUND"]),
+  postType: z.enum(POST_TYPES),
   title: z.string(),
   itemDescription: z.string(),
   location: z.string(),
@@ -29,3 +31,4 @@ export const FullPostSchema = PostSchema.extend({
 
 export type Post = z.infer<typeof PostSchema>;
 export type FullPost = z.infer<typeof FullPostSchema>;
+export type CreatePost = Omit<Post, "id" | "idAccount" | "createdAt" | "resolvedAt">;

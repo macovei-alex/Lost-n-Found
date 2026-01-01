@@ -3,8 +3,13 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet } from "react-native-unistyles";
 import ChatStackNavigator from "./ChatStackNavigator";
 import PostsStackNavigator from "./PostsStackNavigator";
+import CreatePostScreen from "src/screens/CreatePostScreen";
 
-export type MainTabParamList = {};
+export type MainTabParamList = {
+  PostsStackNavigator: undefined;
+  CreatePostScreen: undefined;
+  Chat: undefined;
+};
 
 const MainTab = createBottomTabNavigator();
 
@@ -21,6 +26,14 @@ export default function MainTabNavigator() {
         component={PostsStackNavigator}
         options={{
           title: "Posts",
+          tabBarIcon: ({ focused, color, size }) => <></>,
+        }}
+      />
+      <MainTab.Screen
+        name="CreatePostScreen"
+        component={CreatePostScreen}
+        options={{
+          title: "Create",
           tabBarIcon: ({ focused, color, size }) => <></>,
         }}
       />

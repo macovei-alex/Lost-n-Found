@@ -1,10 +1,15 @@
 package com.example.project.mappers;
 
+import com.example.project.database.entities.Account;
 import com.example.project.database.entities.Post;
 import com.example.project.database.entities.PostImage;
+import com.example.project.dtos.CreatePostDto;
 import com.example.project.dtos.FullPostDto;
 import com.example.project.dtos.PostDto;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class PostMapper {
@@ -49,6 +54,23 @@ public class PostMapper {
                 )
                 .productLink(entity.getProductLink())
                 .build();
+    }
+
+    public Post mapToEntity(CreatePostDto createPostDto, Account account, String mainImageName, List<PostImage> postImages) {
+        if (createPostDto == null) {
+            return null;
+        }
+        return Post.builder()
+                       .account(account)
+                       .postType(createPostDto.getPostType())
+                       .title(createPostDto.getTitle())
+                       .itemDescription(createPostDto.getItemDescription())
+                       .location(createPostDto.getLocation())
+                       .mainImageName(mainImageName)
+                       .productLink(createPostDto.getProductLink())
+                       .createdAt(LocalDateTime.now())
+                       .images(postImages)
+                       .build();
     }
 
 }

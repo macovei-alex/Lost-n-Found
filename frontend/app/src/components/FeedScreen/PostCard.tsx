@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
-import { View, Button } from "react-native";
-import { Text } from "src/components/ui";
+import { View, GestureResponderEvent, Pressable } from "react-native";
+import { Text, Button } from "src/components/ui";
 import { StyleSheet } from "react-native-unistyles";
 import { Post } from "src/api/types/Post";
 import { ENV } from "src/config/env";
@@ -14,11 +14,12 @@ type PostCardProps = {
 };
 
 export default function PostCard({ post, onNavigate }: PostCardProps) {
-  const { api, token } = useAuthContext();
+  const { api } = useAuthContext();
   const navigation = useNavigation<any>();
   const [loading, setLoading] = useState(false);
 
-  const handleChatPress = async () => {
+  const handleChatPress = async (event: GestureResponderEvent) => {
+    event.stopPropagation();
     setLoading(true);
     try {
       const meResponse = await api("/accounts/me");
@@ -40,7 +41,7 @@ export default function PostCard({ post, onNavigate }: PostCardProps) {
   };
 
   return (
-    <View style={styles.postCard} onTouchEnd={onNavigate}>
+    <Pressable style={styles.postCard} onPress={onNavigate}>
       <Text style={styles.title}>{post.title}</Text>
       <Text style={styles.description}>{post.itemDescription}</Text>
       <Text style={styles.location}>{post.location}</Text>
@@ -49,8 +50,8 @@ export default function PostCard({ post, onNavigate }: PostCardProps) {
         style={styles.image}
         contentFit="contain"
       />
-      <Button title="Message Seller" onPress={handleChatPress} />
-    </View>
+      <Button title="Message Seller" onPress={handleChatPress} disabled={loading} />
+    </Pressable>
   );
 }
 
