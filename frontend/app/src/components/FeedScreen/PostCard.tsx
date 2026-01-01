@@ -1,9 +1,12 @@
 import { Image } from "expo-image";
-import { View } from "react-native";
+import { View, Button } from "react-native";
 import { Text } from "src/components/ui";
 import { StyleSheet } from "react-native-unistyles";
 import { Post } from "src/api/types/Post";
 import { ENV } from "src/config/env";
+import { useAuthContext } from "src/context/AuthContext";
+import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 
 type PostCardProps = {
   post: Post;
@@ -11,6 +14,31 @@ type PostCardProps = {
 };
 
 export default function PostCard({ post, onNavigate }: PostCardProps) {
+  const { api, token } = useAuthContext();
+  const navigation = useNavigation<any>();
+  const [loading, setLoading] = useState(false);
+
+  const handleChatPress = async () => {
+    setLoading(true);
+    try {
+      const meResponse = await api("/accounts/me");
+      const currentUser = await meResponse.json();
+      const currentUserId = currentUser.id;
+      const chatResponse = await api(
+        `/chats/get-or-create?account1Id=${currentUserId}&account2Id=${post.idAccount}`
+      );
+      const chat = await chatResponse.json();
+      navigation.navigate("Chat", {
+        screen: "ChatRoomScreen",
+        params: { chatId: chat.id, chatTitle: post.title },
+      });
+    } catch (err) {
+      console.error("Error creating chat:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.postCard} onTouchEnd={onNavigate}>
       <Text style={styles.title}>{post.title}</Text>
@@ -21,6 +49,7 @@ export default function PostCard({ post, onNavigate }: PostCardProps) {
         style={styles.image}
         contentFit="contain"
       />
+      <Button title="Message Seller" onPress={handleChatPress} />
     </View>
   );
 }

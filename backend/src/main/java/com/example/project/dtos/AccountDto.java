@@ -1,9 +1,6 @@
 package com.example.project.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +8,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 public class AccountDto {
 
 	private Integer id;
@@ -21,4 +19,10 @@ public class AccountDto {
 	private LocalDateTime createdAt;
 	private String profileImageName;
 
+    public AccountDto(Integer id, String email, String name, String profileImageName) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.profileImageName = profileImageName;
+    }
 }
