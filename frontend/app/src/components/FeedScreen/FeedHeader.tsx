@@ -2,11 +2,14 @@ import { View } from "react-native";
 import { Text, TouchableOpacity } from "src/components/ui";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import { useAuthContext } from "src/context/AuthContext";
 
 export default function FeedListHeader() {
+  const { jwtClaims } = useAuthContext();
+
   return (
     <View style={headerStyles.container}>
-      <Text style={headerStyles.greeting}>👋 Hello, Student!</Text>
+      <Text style={headerStyles.greeting}>👋 Hello, {jwtClaims?.name}!</Text>
       <Text style={headerStyles.title}>Your Lost & Found Feed</Text>
       <View style={headerStyles.actionsContainer}>
         <TouchableOpacity style={headerStyles.filterButton} activeOpacity={0.75}>

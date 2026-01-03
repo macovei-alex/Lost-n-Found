@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { loadFullPostQO } from "src/api/options/loadFullPostQO";
-import { Button, CenteredView, ScreenActivityIndicator, Text, TouchableOpacity } from "src/components/ui";
+import { Button, CenteredView, ActivityIndicator, Text, TouchableOpacity } from "src/components/ui";
 import { ENV } from "src/config/env";
 import { useAuthContext } from "src/context/AuthContext";
 import { PostsStackParamList } from "src/navigation/PostsStackNavigator";
@@ -25,7 +25,7 @@ export default function FullPostScreen() {
   const { data, error, isError, refetch, isLoading, isRefetching } = useQuery(loadFullPostQO(api, postId));
 
   if (isLoading || isRefetching) {
-    return <ScreenActivityIndicator />;
+    return <ActivityIndicator />;
   }
 
   if (!data || isError) {
@@ -112,6 +112,7 @@ const styles = StyleSheet.create((theme) => ({
     padding: 16,
     paddingBottom: 32,
     backgroundColor: theme.colors.surfaceA10,
+    minHeight: "100%",
   },
   mainImage: {
     height: 300,

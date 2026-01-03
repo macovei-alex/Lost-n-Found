@@ -1,7 +1,8 @@
-import React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useMemo } from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Text, TouchableOpacity } from "src/components/ui";
+import { Button, Text, TouchableOpacity } from "src/components/ui";
 
 type SelectedImage = {
   uri: string;
@@ -18,22 +19,36 @@ type OtherImagesSectionProps = {
 export default function OtherImagesSection({ images, onRemoveImage, onAddImages }: OtherImagesSectionProps) {
   const canAddMore = images.length < 5;
 
+  const imageKeys = useMemo(() => {
+    const keys: string[] = [];
+    for (const img of images) {
+      if (!keys.includes(img.name)) {
+        keys.push(img.name);
+      } else {
+        keys.push(Math.random().toString(36).substring(2, 8));
+      }
+    }
+    return keys;
+  }, [images]);
+
   return (
     <View>
       <Text style={styles.label}>Other Images (optional, up to 5)</Text>
       <View style={styles.chipsRow}>
-        {images.map((img) => (
-          <View key={img.name} style={styles.chip}>
+        {images.map((img, index) => (
+          <View key={imageKeys[index]} style={styles.chip}>
             <Text style={styles.chipText}>{img.name}</Text>
-            <TouchableOpacity onPress={() => onRemoveImage(img.name)} style={styles.chipRemove}>
-              <Text style={styles.chipRemoveText}>x</Text>
+            <TouchableOpacity
+              onPress={() => onRemoveImage(img.name)}
+              style={styles.chipRemove}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="close" size={16} style={styles.chipRemoveIcon} />
             </TouchableOpacity>
           </View>
         ))}
         {canAddMore && (
-          <TouchableOpacity style={styles.addChip} onPress={onAddImages} activeOpacity={0.85}>
-            <Text style={styles.addChipText}>+ Add</Text>
-          </TouchableOpacity>
+          <Button style={styles.addChip} onPress={onAddImages} title="+ Add" textStyle={styles.addChipText} />
         )}
       </View>
     </View>
@@ -45,31 +60,32 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.primaryA30,
     fontWeight: "600",
     marginTop: 6,
+    marginBottom: 4,
   },
   chipsRow: {
     flexDirection: "row",
     flexWrap: "wrap",
+    alignItems: "center",
     gap: 8,
   },
   chip: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingVertical: 4,
     backgroundColor: theme.colors.surfaceA20,
     borderRadius: 12,
     gap: 6,
   },
   chipText: {
-    color: theme.colors.primaryA10,
+    color: theme.colors.primaryA20,
     fontWeight: "600",
   },
   chipRemove: {
-    paddingHorizontal: 6,
+    backgroundColor: theme.colors.primaryA20,
   },
-  chipRemoveText: {
-    color: theme.colors.dangerA0,
-    fontWeight: "800",
+  chipRemoveIcon: {
+    color: theme.colors.textOpposite,
   },
   addChip: {
     paddingHorizontal: 12,
@@ -78,7 +94,7 @@ const styles = StyleSheet.create((theme) => ({
     borderRadius: 12,
   },
   addChipText: {
-    color: theme.colors.textOpposite,
+    fontSize: 14,
     fontWeight: "700",
   },
 }));

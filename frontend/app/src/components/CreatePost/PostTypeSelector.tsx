@@ -37,6 +37,7 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.primaryA30,
     fontWeight: "600",
     marginTop: 6,
+    marginBottom: 4,
   },
   row: {
     flexDirection: "row",

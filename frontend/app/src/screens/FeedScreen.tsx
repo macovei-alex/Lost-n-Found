@@ -1,12 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { FlatList, ActivityIndicator, Text, View, RefreshControl, Button } from "react-native";
+import { FlatList, Text, View, RefreshControl, Button } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { infinitePostsQueryOptions } from "src/api/options/infinitePostsQueryOptions";
 import FeedListHeader from "src/components/FeedScreen/FeedHeader";
 import PostCard from "src/components/FeedScreen/PostCard";
-import { ScreenActivityIndicator } from "src/components/ui";
+import { ActivityIndicator } from "src/components/ui";
 import { useAuthContext } from "src/context/AuthContext";
 import { PostsStackParamList } from "src/navigation/PostsStackNavigator";
 
@@ -28,7 +28,7 @@ export default function FeedScreen() {
   } = useInfiniteQuery(infinitePostsQueryOptions(api, 12));
 
   if (isLoading || isRefetching) {
-    return <ScreenActivityIndicator />;
+    return <ActivityIndicator />;
   }
 
   if (isError || !data) {

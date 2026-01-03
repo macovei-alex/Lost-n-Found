@@ -115,10 +115,11 @@ export default function CreatePostScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsMultipleSelection: mode === "other",
       selectionLimit: remainingSlots,
-      quality: 1.0,
+      defaultTab: "photos",
+      quality: 1,
     });
 
     if (result.canceled) return;
@@ -243,6 +244,7 @@ export default function CreatePostScreen() {
 
 const styles = StyleSheet.create((theme) => ({
   container: {
+    minHeight: "100%",
     padding: 20,
     paddingTop: 36,
     backgroundColor: theme.colors.surfaceA0,

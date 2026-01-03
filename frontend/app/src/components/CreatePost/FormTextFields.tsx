@@ -47,6 +47,7 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.primaryA30,
     fontWeight: "600",
     marginTop: 6,
+    marginBottom: 4,
   },
   input: {
     borderWidth: 1,

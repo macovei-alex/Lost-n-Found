@@ -1,40 +1,46 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ENV } from "src/config/env";
 import z from "zod";
 
 export type API = (url: string, options?: RequestInit) => Promise<Response>;
 
+const JwtSchema = z.object({
+  sub: z.string(),
+  iat: z.number(),
+  exp: z.number(),
+  name: z.string(),
+});
+
+export type JwtClaims = z.infer<typeof JwtSchema>;
+
 type AuthContextType = {
   token: string | null;
+  jwtClaims: JwtClaims | null;
   isAuthenticated: boolean;
   login: (token: string) => Promise<void>;
   logout: () => Promise<void>;
   api: API;
 };
 
-const JwtSchema = z.object({
-  sub: z.string(),
-  iat: z.number(),
-  exp: z.number(),
-});
-
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
 
-  const isAuthenticated = (() => {
-    if (!token) return false;
-
+  const jwtClaims = useMemo(() => {
+    if (!token) return null;
     const body = JSON.parse(atob(token.split(".")[1]));
-    const parsed = JwtSchema.safeParse(body);
-    if (!parsed.success) return false;
+    const result = JwtSchema.safeParse(body);
+    if (!result.success) return null;
+    return result.data;
+  }, [token]);
 
-    if (Date.now() >= parsed.data.exp * 1000) return false;
-
+  const isAuthenticated = useMemo(() => {
+    if (!jwtClaims) return false;
+    if (Date.now() >= jwtClaims.exp * 1000) return false;
     return true;
-  })();
+  }, [jwtClaims]);
 
   useEffect(() => {
     const loadToken = async () => {
@@ -76,6 +82,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider
       value={{
         token,
+        jwtClaims,
         isAuthenticated,
         login,
         logout,

@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { View, GestureResponderEvent, Pressable } from "react-native";
+import { GestureResponderEvent, Pressable } from "react-native";
 import { Text, Button } from "src/components/ui";
 import { StyleSheet } from "react-native-unistyles";
 import { Post } from "src/api/types/Post";
@@ -50,7 +50,12 @@ export default function PostCard({ post, onNavigate }: PostCardProps) {
         style={styles.image}
         contentFit="contain"
       />
-      <Button title="Message Seller" onPress={handleChatPress} disabled={loading} />
+      <Button
+        title="Message Seller"
+        onPress={handleChatPress}
+        disabled={loading}
+        style={styles.messageButton}
+      />
     </Pressable>
   );
 }
@@ -79,12 +84,17 @@ const styles = StyleSheet.create((theme) => ({
     marginBottom: 4,
   },
   location: {
-    color: theme.colors.primaryA50,
+    color: theme.colors.primaryA30,
     fontSize: 12,
   },
   image: {
     height: 200,
     marginTop: 8,
     borderRadius: 12,
+  },
+  messageButton: {
+    marginTop: 12,
+    paddingTop: 8,
+    paddingHorizontal: 40,
   },
 }));

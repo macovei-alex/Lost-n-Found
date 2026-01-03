@@ -12,9 +12,9 @@ export default function MainImageSection({ selectedImageName, onPickImage }: Mai
   return (
     <View>
       <Text style={styles.label}>Main Image</Text>
-      <TouchableOpacity style={styles.imagePicker} onPress={onPickImage} activeOpacity={0.85}>
+      <TouchableOpacity style={styles.imagePicker} onPress={onPickImage}>
         <Text style={styles.imagePickerText}>
-          {selectedImageName ? `Selected: ${selectedImageName}` : "Pick main image"}
+          {selectedImageName ? selectedImageName : "Pick main image"}
         </Text>
       </TouchableOpacity>
     </View>
@@ -26,6 +26,7 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.primaryA30,
     fontWeight: "600",
     marginTop: 6,
+    marginBottom: 4,
   },
   imagePicker: {
     borderWidth: 1,
