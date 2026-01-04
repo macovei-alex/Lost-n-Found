@@ -92,4 +92,13 @@ public class PostService {
         return postMapper.mapToFullPostDto(post);
     }
 
+    public void deletePost(int postId) {
+        var post = postRepository.findByIdPreloadImages(postId)
+                           .orElseThrow(() -> new EntityNotFoundException("Post with id " + postId + " not found"));
+        postRepository.deleteById(post.getId());
+        for (PostImage postImage : post.getImages()) {
+            imageService.deleteImage(postImage.getImageName());
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package com.example.project.controllers;
 
 import com.example.project.database.entities.Account;
 import com.example.project.dtos.AccountDto;
+import com.example.project.mappers.AccountMapper;
 import com.example.project.services.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,10 @@ import java.util.List;
 public class AccountController {
 
 	private final AccountService accountService;
+    private final AccountMapper accountMapper;
 
 
-	@GetMapping("/{id}")
+    @GetMapping("/{id}")
 	public ResponseEntity<AccountDto> getAccountById(@PathVariable Integer id) {
 		return accountService.getById(id)
 				.map(ResponseEntity::ok)
@@ -33,13 +35,7 @@ public class AccountController {
     public ResponseEntity<AccountDto> authenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Account currentUser = (Account) authentication.getPrincipal();
-        AccountDto dto = new AccountDto(
-                currentUser.getId(),
-                currentUser.getEmail(),
-                currentUser.getName(),
-                currentUser.getProfileImageName()
-        );
-
+        AccountDto dto = accountMapper.fromEntity(currentUser);
         return ResponseEntity.ok(dto);
     }
 

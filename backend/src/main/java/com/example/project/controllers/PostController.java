@@ -42,4 +42,9 @@ public class PostController {
         return postService.createPost(createPostDto, account);
     }
 
+    @DeleteMapping("/{postId}")
+    public void deletePost(@PathVariable int postId) {
+        postService.deletePost(postId);
+    }
+
 }

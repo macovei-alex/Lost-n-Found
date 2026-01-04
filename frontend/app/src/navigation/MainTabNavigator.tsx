@@ -5,6 +5,7 @@ import ChatStackNavigator from "./ChatStackNavigator";
 import PostsStackNavigator from "./PostsStackNavigator";
 import CreatePostScreen from "src/screens/CreatePostScreen";
 import { Ionicons } from "@expo/vector-icons";
+import ProfileStackNavigator from "./ProfileStackNavigator";
 
 export type MainTabParamList = {
   PostsStackNavigator: undefined;
@@ -66,6 +67,20 @@ export default function MainTabNavigator() {
           tabBarIcon: ({ focused, color, size }) => (
             <Ionicons
               name={focused ? "chatbubble" : "chatbubble-outline"}
+              size={size}
+              style={styles.tabBarIcon(focused, color)}
+            />
+          ),
+        }}
+      />
+      <MainTab.Screen
+        name="ProfileStacknavigator"
+        component={ProfileStackNavigator}
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
               size={size}
               style={styles.tabBarIcon(focused, color)}
             />
