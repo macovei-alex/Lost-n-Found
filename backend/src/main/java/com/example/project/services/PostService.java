@@ -18,13 +18,14 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,14 +42,15 @@ public class PostService {
     private final ImageService imageService;
 
 
-    public Page<PostDto> getAllPaged(int page, int pageSize) {
-        return postRepository.findAllNotResolved(PageRequest.of(page, pageSize))
-                       .map(postMapper::mapToSimplePostDto);
+    public Page<PostDto> getActivePaged(int page, int pageSize) {
+        var spec = PostSpecifications.isNotResolved();
+        var pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return postRepository.findAll(spec, pageable).map(postMapper::mapToSimplePostDto);
     }
 
     public Page<PostDto> getAllMyPostsPaged(int page, int pageSize, Optional<PostType> postType, Optional<Boolean> resolved) {
-        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Specification<Post> spec = PostSpecifications.ownedBy(account.getId());
+        var account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var spec = PostSpecifications.ownedBy(account.getId());
         if (postType.isPresent()) {
             spec = spec.and(PostSpecifications.hasType(postType.get()));
         }
@@ -56,19 +58,22 @@ public class PostService {
             spec = spec.and(PostSpecifications.isResolved());
         }
 
-        return postRepository
-                       .findAll(spec, PageRequest.of(page, pageSize))
-                       .map(postMapper::mapToSimplePostDto);
+        var pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        return postRepository.findAll(spec, pageable)
+                .map(postMapper::mapToSimplePostDto);
     }
 
     public FullPostDto getFullPost(int postId) {
-        var optionalPost = postRepository.findByIdPreloadImages(postId);
-        if (optionalPost.isEmpty()) {
-            log.error("Post with id {} not found", postId);
+        var spec = PostSpecifications.hasId(postId)
+                .and(PostSpecifications.fetchImages());
+        var posts = postRepository.findAll(spec);
+        if (posts.isEmpty()) {
             throw new EntityNotFoundException("Post with id " + postId + " not found");
         }
+        assert posts.size() == 1;
+        var post =  posts.getFirst();
 
-        var post = optionalPost.get();
         return postMapper.mapToFullPostDto(post);
     }
 
@@ -100,9 +105,9 @@ public class PostService {
         Post post = postMapper.mapToEntity(createPost, account, newImages.getFirst(), postImages);
 
         postImages.addAll(newImages.stream()
-                                  .skip(1)
-                                  .map((name) -> new PostImage(null, post, name))
-                                  .toList()
+                .skip(1)
+                .map((name) -> new PostImage(null, post, name))
+                .toList()
         );
 
         postRepository.save(post);
@@ -112,12 +117,22 @@ public class PostService {
     }
 
     public void deletePost(int postId) {
-        var post = postRepository.findByIdPreloadImages(postId)
-                           .orElseThrow(() -> new EntityNotFoundException("Post with id " + postId + " not found"));
+        var spec = PostSpecifications.hasId(postId)
+                .and(PostSpecifications.fetchImages());
+        var post = postRepository.findOne(spec)
+                .orElseThrow(() -> new EntityNotFoundException("Post with id " + postId + " not found"));
         postRepository.deleteById(post.getId());
         for (PostImage postImage : post.getImages()) {
             imageService.deleteImage(postImage.getImageName());
         }
+    }
+
+    @Transactional
+    public FullPostDto resolvePost(int postId) {
+        var post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post with id " + postId + " not found"));
+        post.setResolvedAt(LocalDateTime.now());
+        return postMapper.mapToFullPostDto(post);
     }
 
 }

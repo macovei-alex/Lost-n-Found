@@ -2,12 +2,12 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { FlatList, View, RefreshControl, Button, Alert } from "react-native";
+import { FlatList, View, RefreshControl, Button } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { infiniteMyPostsFullKey, infiniteMyPostsQO } from "src/api/options/infiniteMyPostsQO";
-import { PostType } from "src/api/types/Post";
+import { PostType } from "src/api/types/Posts";
 import MyPostCard from "src/components/MyPosts/MyPostCard";
-import { ActivityIndicator, CenteredView, Text } from "src/components/ui";
+import { ActivityIndicator, CenteredView, PageHeader, Text } from "src/components/ui";
 import { useAuthContext } from "src/context/AuthContext";
 import { ProfileStackParamList } from "src/navigation/ProfileStackNavigator";
 import MyPostsFilters from "../../components/MyPosts/MyPostsFilters";
@@ -56,13 +56,15 @@ export default function MyPostsScreen() {
             data={posts}
             style={styles.listStyle}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <MyPostCard post={item} onNavigate={() => Alert.alert("TODO")} />}
+            renderItem={({ item }) => (
+              <MyPostCard post={item} onNavigate={() => navigate("MyFullPostScreen", { postId: item.id })} />
+            )}
             onEndReached={() => {
               if (hasNextPage) fetchNextPage();
             }}
             onEndReachedThreshold={0.5}
             ListHeaderComponent={
-              <CenteredView style={styles.headerContainer}>
+              <PageHeader>
                 <Text style={styles.headerText}>My Posts</Text>
                 <MyPostsFilters
                   postType={postType}
@@ -70,7 +72,7 @@ export default function MyPostsScreen() {
                   setPostType={setPostType}
                   setResolved={setResolved}
                 />
-              </CenteredView>
+              </PageHeader>
             }
             ListFooterComponent={
               isFetchingNextPage ? <ActivityIndicator style={styles.bottomActivityIndicator} /> : null
@@ -106,10 +108,6 @@ const styles = StyleSheet.create((theme) => ({
   listStyle: {
     flexGrow: 0,
     flexShrink: 1,
-  },
-  headerContainer: {
-    marginTop: 36,
-    marginBottom: 16,
   },
   headerText: {
     fontSize: 32,

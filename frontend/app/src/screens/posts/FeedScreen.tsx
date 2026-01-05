@@ -1,12 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { FlatList, Text, View, RefreshControl, Button } from "react-native";
+import { FlatList, View, RefreshControl } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { infinitePostsQO } from "src/api/options/infinitePostsQO";
 import FeedListHeader from "src/components/FeedScreen/FeedHeader";
 import PostCard from "src/components/FeedScreen/PostCard";
-import { ActivityIndicator, CenteredView } from "src/components/ui";
+import { ActivityIndicator, CenteredView, Text, Button } from "src/components/ui";
 import { useAuthContext } from "src/context/AuthContext";
 import { PostsStackParamList } from "src/navigation/PostsStackNavigator";
 
@@ -34,7 +34,7 @@ export default function FeedScreen() {
   if (isError || !data) {
     console.error("Error fetching feed posts:", error);
     return (
-      <CenteredView>
+      <CenteredView style={styles.alternativeContainer}>
         <Text>Error loading feed posts</Text>
         <Button title="Retry" onPress={() => refetch()} />
       </CenteredView>
@@ -70,6 +70,13 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     backgroundColor: theme.colors.surfaceA0,
     paddingTop: 12,
+  },
+  alternativeContainer: {
+    backgroundColor: theme.colors.surfaceA0,
+    gap: 8,
+  },
+  errorText: {
+    color: theme.colors.text,
   },
   bottomActivityIndicator: {
     margin: 16,

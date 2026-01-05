@@ -2,10 +2,9 @@ import React, { useMemo, useState } from "react";
 import { Alert, KeyboardAvoidingView, ScrollView } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Text } from "src/components/ui";
-import { Post } from "src/api/types/Post";
+import { CreatePost } from "src/api/types/Posts";
 import { useAuthContext } from "src/context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
-import { useQueryClient } from "@tanstack/react-query";
 import { NativeBottomTabNavigationProp } from "@react-navigation/bottom-tabs/unstable";
 import { MainTabParamList } from "src/navigation/MainTabNavigator";
 import * as ImagePicker from "expo-image-picker";
@@ -14,6 +13,7 @@ import FormTextFields, { TextFieldConfig } from "src/components/CreatePost/FormT
 import MainImageSection from "src/components/CreatePost/MainImageSection";
 import OtherImagesSection from "src/components/CreatePost/OtherImagesSection";
 import SubmitSection from "src/components/CreatePost/SubmitSection";
+import { useCreatePostMutation } from "src/api/mutations/useCreatePostMutation";
 
 type NavigationProps = NativeBottomTabNavigationProp<MainTabParamList, "CreatePostScreen">;
 
@@ -23,17 +23,7 @@ type SelectedImage = {
   mimeType?: string;
 };
 
-type FormState = {
-  postType: Post["postType"];
-  title: string;
-  itemDescription: string;
-  location: string;
-  mainImage: SelectedImage | null;
-  productLink: string;
-  otherImages: SelectedImage[];
-};
-
-const initialState: FormState = {
+const initialState: CreatePost = {
   postType: "LOST",
   title: "",
   itemDescription: "",
@@ -74,35 +64,36 @@ const TEXT_FIELDS: TextFieldConfig[] = [
 
 export default function CreatePostScreen() {
   const navigation = useNavigation<NavigationProps>();
-  const queryClient = useQueryClient();
   const { api } = useAuthContext();
 
-  const [form, setForm] = useState<FormState>(initialState);
-  const [submitting, setSubmitting] = useState(false);
+  const createPostMutation = useCreatePostMutation(api);
+
+  const [createPostData, setCreatePostData] = useState<CreatePost>(initialState);
   const [error, setError] = useState<string | null>(null);
 
   const isValid = useMemo(() => {
     return (
-      form.title.trim().length > 0 &&
-      form.itemDescription.trim().length > 0 &&
-      form.location.trim().length > 0 &&
-      !!form.mainImage &&
-      form.otherImages.length <= 5
+      createPostData.title.trim().length > 0 &&
+      createPostData.itemDescription.trim().length > 0 &&
+      createPostData.location.trim().length > 0 &&
+      !!createPostData.mainImage &&
+      createPostData.otherImages.length <= 5
     );
-  }, [form]);
+  }, [createPostData]);
 
-  const updateField = <K extends keyof FormState>(
+  const updateField = <K extends keyof CreatePost>(
     key: K,
-    value: FormState[K] | ((prev: FormState[K]) => FormState[K])
+    value: CreatePost[K] | ((prev: CreatePost[K]) => CreatePost[K])
   ) => {
-    setForm((prev) => ({
+    setCreatePostData((prev) => ({
       ...prev,
-      [key]: typeof value === "function" ? (value as (prev: FormState[K]) => FormState[K])(prev[key]) : value,
+      [key]:
+        typeof value === "function" ? (value as (prev: CreatePost[K]) => CreatePost[K])(prev[key]) : value,
     }));
   };
 
   const pickImages = async (mode: "main" | "other") => {
-    const remainingSlots = mode === "other" ? Math.max(0, 5 - form.otherImages.length) : 1;
+    const remainingSlots = mode === "other" ? Math.max(0, 5 - createPostData.otherImages.length) : 1;
     if (remainingSlots === 0) {
       Alert.alert("Limit reached", "You can add up to 5 additional images.");
       return;
@@ -137,7 +128,7 @@ export default function CreatePostScreen() {
       const first = normalized[0];
       updateField("mainImage", first);
     } else {
-      const next = [...form.otherImages, ...normalized].slice(0, 5);
+      const next = [...createPostData.otherImages, ...normalized].slice(0, 5);
       updateField("otherImages", next);
     }
   };
@@ -146,62 +137,24 @@ export default function CreatePostScreen() {
     updateField("otherImages", (prev) => prev.filter((img) => img.name !== name));
   };
 
-  const buildFormData = (form: FormState): FormData => {
-    const data = new FormData();
-
-    data.append("postType", form.postType);
-    data.append("title", form.title.trim());
-    data.append("itemDescription", form.itemDescription.trim());
-    data.append("location", form.location.trim());
-    data.append("productLink", form.productLink.trim());
-
-    if (form.mainImage) {
-      data.append("mainImage", {
-        uri: form.mainImage.uri.trim(),
-        name: form.mainImage.name.trim(),
-        type: form.mainImage.mimeType ?? "image/jpeg",
-      } as any);
-    }
-
-    form.otherImages.forEach((image) => {
-      data.append("otherImages", {
-        uri: image.uri.trim(),
-        name: image.name.trim(),
-        type: image.mimeType ?? "image/jpeg",
-      } as any);
-    });
-
-    return data;
-  };
-
   const handleSubmit = async () => {
     if (!isValid) {
       setError("Please fill in all required fields.");
       return;
     }
 
-    setSubmitting(true);
     setError(null);
-
-    try {
-      const formData = buildFormData(form);
-
-      await api("/posts", {
-        method: "POST",
-        body: formData,
-      });
-
-      await queryClient.invalidateQueries({ queryKey: ["posts"] });
-
-      Alert.alert("Post created", "Your post has been published.");
-      setForm(initialState);
-      navigation.navigate("PostsStackNavigator");
-    } catch (err) {
-      console.error("Failed to create post", err);
-      setError("Unable to create post. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
+    createPostMutation.mutate(createPostData, {
+      onSuccess: () => {
+        Alert.alert("Post created", "Your post has been published.");
+        setCreatePostData(initialState);
+        navigation.navigate("PostsStackNavigator");
+      },
+      onError: (err) => {
+        console.error("Error creating post:", err);
+        Alert.alert("Error", "There was an error creating your post. Please try again.");
+      },
+    });
   };
 
   return (
@@ -209,23 +162,26 @@ export default function CreatePostScreen() {
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <Text style={styles.heading}>Create a Post</Text>
 
-        <PostTypeSelector selected={form.postType} onSelect={(type) => updateField("postType", type)} />
+        <PostTypeSelector
+          selected={createPostData.postType}
+          onSelect={(type) => updateField("postType", type)}
+        />
 
         <FormTextFields
           fields={TEXT_FIELDS}
-          values={form}
+          values={createPostData}
           onChangeField={(key, value) =>
-            updateField(key as keyof FormState, value as FormState[keyof FormState])
+            updateField(key as keyof CreatePost, value as CreatePost[keyof CreatePost])
           }
         />
 
         <MainImageSection
-          selectedImageName={form.mainImage?.name ?? null}
+          selectedImageName={createPostData.mainImage?.name ?? null}
           onPickImage={() => pickImages("main")}
         />
 
         <OtherImagesSection
-          images={form.otherImages}
+          images={createPostData.otherImages}
           onRemoveImage={removeOtherImage}
           onAddImages={() => pickImages("other")}
         />
@@ -233,7 +189,7 @@ export default function CreatePostScreen() {
         <SubmitSection
           error={error}
           isValid={isValid}
-          isSubmitting={submitting}
+          isSubmitting={createPostMutation.isPending}
           onCancel={() => navigation.goBack()}
           onSubmit={handleSubmit}
         />

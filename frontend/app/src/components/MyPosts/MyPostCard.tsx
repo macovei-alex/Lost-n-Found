@@ -2,7 +2,7 @@ import { Image } from "expo-image";
 import { Pressable, View } from "react-native";
 import { Text } from "src/components/ui";
 import { StyleSheet } from "react-native-unistyles";
-import { Post } from "src/api/types/Post";
+import { Post } from "src/api/types/Posts";
 import { ENV } from "src/config/env";
 
 type PostCardProps = {

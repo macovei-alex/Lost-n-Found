@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { API } from "src/context/AuthContext";
-import { FullPostSchema } from "../types/Post";
+import { FullPostSchema } from "../types/Posts";
 
 export function loadFullPostQO(api: API, postId: number) {
   return queryOptions({

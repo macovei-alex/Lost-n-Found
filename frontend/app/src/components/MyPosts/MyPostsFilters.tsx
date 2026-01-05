@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Pressable } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { PostType } from "src/api/types/Post";
+import { PostType } from "src/api/types/Posts";
 import { Text, SelectModal } from "src/components/ui";
 
 interface PostsFiltersProps {

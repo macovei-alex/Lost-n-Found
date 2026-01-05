@@ -1,10 +1,11 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Post } from "src/api/types/Posts";
 import FeedScreen from "src/screens/posts/FeedScreen";
 import FullPostScreen from "src/screens/posts/FullPostScreen";
 
 export type PostsStackParamList = {
   FeedScreen: undefined;
-  FullPostScreen: { postId: number };
+  FullPostScreen: { postId: Post["id"] };
 };
 
 const PostsStack = createNativeStackNavigator<PostsStackParamList>();

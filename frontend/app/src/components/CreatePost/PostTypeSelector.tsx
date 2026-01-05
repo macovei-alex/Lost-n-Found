@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Text, TouchableOpacity } from "src/components/ui";
-import { Post, POST_TYPES } from "src/api/types/Post";
+import { Post, POST_TYPES } from "src/api/types/Posts";
 
 type PostTypeSelectorProps = {
   selected: Post["postType"];

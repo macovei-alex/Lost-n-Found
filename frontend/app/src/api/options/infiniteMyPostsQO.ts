@@ -1,7 +1,6 @@
 import { infiniteQueryOptions } from "@tanstack/react-query";
-import { PaginatedPostsSchema } from "src/api/types/PaginatedPosts";
 import { API } from "src/context/AuthContext";
-import { PostType } from "../types/Post";
+import { PaginatedPostsSchema, PostType } from "../types/Posts";
 
 type AdditionalQueryOptions = {
   postType?: PostType;

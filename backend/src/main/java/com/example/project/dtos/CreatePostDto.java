@@ -21,5 +21,5 @@ public class CreatePostDto {
     private String productLink;
     @NotNull
     private MultipartFile mainImage;
-    private List<MultipartFile> otherImages;
+    private List<MultipartFile> otherImages = List.of();
 }

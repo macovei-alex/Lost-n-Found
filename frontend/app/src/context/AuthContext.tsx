@@ -71,11 +71,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
-    if (!(200 <= response.status && response.status < 300)) {
+    if (response.status === 401) {
+      await logout();
+      throw new Error("Unauthorized");
+    } else if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Http request failed with status ${response.status}: ${errorText}`);
-    } else if (response.status === 401) {
-      await logout();
     }
     return response;
   };

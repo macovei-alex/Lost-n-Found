@@ -28,7 +28,7 @@ public class PostController {
 
 	@GetMapping
 	public Page<PostDto> getAllPaged(@RequestParam int page, @RequestParam int pageSize) {
-		return postService.getAllPaged(page, pageSize);
+		return postService.getActivePaged(page, pageSize);
 	}
 
     @GetMapping("/{postId}")
@@ -47,12 +47,15 @@ public class PostController {
         return postService.getAllMyPostsPaged(page, pageSize, postType, resolved);
     }
 
-    @PostMapping(
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FullPostDto createPost(@ModelAttribute @Valid CreatePostDto createPostDto) throws IOException {
         var account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return postService.createPost(createPostDto, account);
+    }
+
+    @PutMapping("/{postId}/resolve")
+    public FullPostDto resolvePost(@PathVariable int postId) {
+        return postService.resolvePost(postId);
     }
 
     @DeleteMapping("/{postId}")

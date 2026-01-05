@@ -3,12 +3,13 @@ import { Text, TouchableOpacity } from "src/components/ui";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { useAuthContext } from "src/context/AuthContext";
+import { PageHeader } from "../ui";
 
 export default function FeedListHeader() {
   const { jwtClaims } = useAuthContext();
 
   return (
-    <View style={headerStyles.container}>
+    <PageHeader>
       <Text style={headerStyles.greeting}>👋 Hello, {jwtClaims?.name}!</Text>
       <Text style={headerStyles.title}>Your Lost & Found Feed</Text>
       <View style={headerStyles.actionsContainer}>
@@ -21,7 +22,7 @@ export default function FeedListHeader() {
           <Text style={headerStyles.sortText}>Sort</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </PageHeader>
   );
 }
 
@@ -30,14 +31,6 @@ const UMaterialIcons = withUnistyles(MaterialIcons, (theme) => ({
 }));
 
 const headerStyles = StyleSheet.create((theme) => ({
-  container: {
-    paddingTop: 32,
-    paddingBottom: 8,
-    paddingHorizontal: 16,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-    marginBottom: 12,
-  },
   greeting: {
     fontSize: 16,
     color: theme.colors.primaryA10,

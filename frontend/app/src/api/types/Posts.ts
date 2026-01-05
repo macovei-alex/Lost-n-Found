@@ -1,12 +1,11 @@
 import { z } from "zod";
-
-export const PostIdSchema = z.number();
+import { PageSchema } from "./Page";
 
 export const POST_TYPES = ["LOST", "FOUND"] as const;
 export type PostType = (typeof POST_TYPES)[number];
 
 export const PostSchema = z.object({
-  id: PostIdSchema,
+  id: z.number(),
   idAccount: z.number(),
   postType: z.enum(POST_TYPES),
   title: z.string(),
@@ -30,6 +29,29 @@ export const FullPostSchema = PostSchema.extend({
   ),
 });
 
+export const PaginatedPostsSchema = z.object({
+  content: z.array(PostSchema),
+  page: PageSchema,
+});
+
 export type Post = z.infer<typeof PostSchema>;
 export type FullPost = z.infer<typeof FullPostSchema>;
-export type CreatePost = Omit<Post, "id" | "idAccount" | "createdAt" | "resolvedAt">;
+export type PaginatedPosts = z.infer<typeof PaginatedPostsSchema>;
+
+export type CreatePost = {
+  postType: PostType;
+  title: string;
+  itemDescription: string;
+  location: string;
+  mainImage: {
+    uri: string;
+    name: string;
+    mimeType?: string;
+  } | null;
+  productLink?: string;
+  otherImages: {
+    uri: string;
+    name: string;
+    mimeType?: string;
+  }[];
+};

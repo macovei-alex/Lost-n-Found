@@ -1,12 +1,13 @@
 import { infiniteQueryOptions } from "@tanstack/react-query";
-import { PaginatedPostsSchema } from "src/api/types/PaginatedPosts";
 import { API } from "src/context/AuthContext";
+import { PaginatedPostsSchema } from "../types/Posts";
 
 export function infinitePostsQO(api: API, pageSize: number) {
   return infiniteQueryOptions({
     queryKey: ["posts", "infinite", pageSize],
     queryFn: async ({ pageParam }) => {
-      const data = await api(`/posts?page=${pageParam}&pageSize=${pageSize}`).then((res) => res.json());
+      const response = await api(`/posts?page=${pageParam}&pageSize=${pageSize}`);
+      const data = await response.json();
       return PaginatedPostsSchema.parse(data);
     },
     initialPageParam: 0,
@@ -14,7 +15,7 @@ export function infinitePostsQO(api: API, pageSize: number) {
       if (lastPage.page.number + 1 >= lastPage.page.totalPages) {
         return undefined;
       }
-      return allPages.length;
+      return lastPage.page.number + 1;
     },
   });
 }
