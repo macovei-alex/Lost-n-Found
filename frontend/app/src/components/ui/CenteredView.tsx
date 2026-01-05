@@ -2,14 +2,32 @@ import React from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-export function CenteredView(props: React.ComponentProps<typeof View>) {
-  return <View {...props} style={[styles.centered, props.style]} />;
+type CenteredViewProps = React.ComponentProps<typeof View> & {
+  direction?: "row" | "column" | "both";
+};
+
+export function CenteredView(props: CenteredViewProps) {
+  return <View {...props} style={[styles.fill, getAlignamntStyles(props.direction), props.style]} />;
 }
 
 const styles = StyleSheet.create(() => ({
-  centered: {
+  fill: {
     flex: 1,
-    justifyContent: "center",
+  },
+  centeredVertical: {
     alignItems: "center",
   },
+  centeredHorizontal: {
+    justifyContent: "center",
+  },
 }));
+
+function getAlignamntStyles(direction: CenteredViewProps["direction"]) {
+  if (!direction || direction === "both") {
+    return [styles.centeredVertical, styles.centeredHorizontal];
+  } else if (direction === "row") {
+    return styles.centeredVertical;
+  } else {
+    return styles.centeredHorizontal;
+  }
+}

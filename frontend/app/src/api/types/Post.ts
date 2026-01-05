@@ -3,6 +3,7 @@ import { z } from "zod";
 export const PostIdSchema = z.number();
 
 export const POST_TYPES = ["LOST", "FOUND"] as const;
+export type PostType = (typeof POST_TYPES)[number];
 
 export const PostSchema = z.object({
   id: PostIdSchema,

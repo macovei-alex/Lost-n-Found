@@ -2,7 +2,7 @@ import { infiniteQueryOptions } from "@tanstack/react-query";
 import { PaginatedPostsSchema } from "src/api/types/PaginatedPosts";
 import { API } from "src/context/AuthContext";
 
-export function infinitePostsQueryOptions(api: API, pageSize: number) {
+export function infinitePostsQO(api: API, pageSize: number) {
   return infiniteQueryOptions({
     queryKey: ["posts", "infinite", pageSize],
     queryFn: async ({ pageParam }) => {

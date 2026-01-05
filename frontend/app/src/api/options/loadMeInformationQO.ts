@@ -2,7 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { API } from "src/context/AuthContext";
 import { MeSchema } from "../types/Me";
 
-export function loadMeInformation(api: API, token: string | null) {
+export function loadMeInformationQO(api: API, token: string | null) {
   return queryOptions({
     queryKey: ["me", token],
     queryFn: async () => {

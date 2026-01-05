@@ -8,7 +8,7 @@ import { formatDate } from "src/utils/date";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { type ProfileStackParamList } from "src/navigation/ProfileStackNavigator";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { loadMeInformation } from "src/api/options/loadMeInformation";
+import { loadMeInformationQO } from "src/api/options/loadMeInformationQO";
 
 type NavigationProps = NativeStackNavigationProp<ProfileStackParamList, "ProfileScreen">;
 
@@ -16,7 +16,7 @@ export default function ProfileScreen() {
   const navigation = useNavigation<NavigationProps>();
   const { jwtClaims, logout, api, token } = useAuthContext();
   const queryClient = useQueryClient();
-  const meQuery = useQuery(loadMeInformation(api, token));
+  const meQuery = useQuery(loadMeInformationQO(api, token));
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   if (!jwtClaims) {
@@ -51,7 +51,7 @@ export default function ProfileScreen() {
   };
 
   const handleViewMyPosts = () => {
-    Alert.alert("TODO");
+    navigation.navigate("MyPostsScreen");
   };
 
   return (

@@ -1,6 +1,7 @@
 package com.example.project.controllers;
 
 import com.example.project.database.entities.Account;
+import com.example.project.database.entities.PostType;
 import com.example.project.dtos.CreatePostDto;
 import com.example.project.dtos.FullPostDto;
 import com.example.project.dtos.PostDto;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -32,6 +34,17 @@ public class PostController {
     @GetMapping("/{postId}")
     public FullPostDto getFullPost(@PathVariable int postId) {
         return postService.getFullPost(postId);
+    }
+
+    @GetMapping("/my")
+    public Page<PostDto> getMyPostsPaged(
+            @RequestParam int page,
+            @RequestParam int pageSize,
+            @RequestParam Optional<PostType> postType,
+            @RequestParam Optional<Boolean> resolved
+    ) {
+        System.out.println(postType);
+        return postService.getAllMyPostsPaged(page, pageSize, postType, resolved);
     }
 
     @PostMapping(

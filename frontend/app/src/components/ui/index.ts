@@ -4,3 +4,4 @@ export * from "./Text";
 export * from "./ActivityIndicator";
 export * from "./TouchableOpacity";
 export * from "./UserAvatar";
+export * from "./SelectModal";

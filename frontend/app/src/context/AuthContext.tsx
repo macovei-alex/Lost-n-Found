@@ -74,6 +74,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!(200 <= response.status && response.status < 300)) {
       const errorText = await response.text();
       throw new Error(`Http request failed with status ${response.status}: ${errorText}`);
+    } else if (response.status === 401) {
+      await logout();
     }
     return response;
   };

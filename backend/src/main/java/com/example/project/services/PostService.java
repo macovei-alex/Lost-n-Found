@@ -3,8 +3,10 @@ package com.example.project.services;
 import com.example.project.database.entities.Account;
 import com.example.project.database.entities.Post;
 import com.example.project.database.entities.PostImage;
+import com.example.project.database.entities.PostType;
 import com.example.project.database.repositories.PostImageRepository;
 import com.example.project.database.repositories.PostRepository;
+import com.example.project.database.specifications.PostSpecifications;
 import com.example.project.dtos.CreatePostDto;
 import com.example.project.dtos.FullPostDto;
 import com.example.project.dtos.ImageDto;
@@ -16,15 +18,17 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -39,6 +43,21 @@ public class PostService {
 
     public Page<PostDto> getAllPaged(int page, int pageSize) {
         return postRepository.findAllNotResolved(PageRequest.of(page, pageSize))
+                       .map(postMapper::mapToSimplePostDto);
+    }
+
+    public Page<PostDto> getAllMyPostsPaged(int page, int pageSize, Optional<PostType> postType, Optional<Boolean> resolved) {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Specification<Post> spec = PostSpecifications.ownedBy(account.getId());
+        if (postType.isPresent()) {
+            spec = spec.and(PostSpecifications.hasType(postType.get()));
+        }
+        if (resolved.isPresent() && resolved.get()) {
+            spec = spec.and(PostSpecifications.isResolved());
+        }
+
+        return postRepository
+                       .findAll(spec, PageRequest.of(page, pageSize))
                        .map(postMapper::mapToSimplePostDto);
     }
 

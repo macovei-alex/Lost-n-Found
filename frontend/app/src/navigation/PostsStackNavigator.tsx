@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import FeedScreen from "src/screens/FeedScreen";
-import FullPostScreen from "src/screens/FullPostScreen";
+import FeedScreen from "src/screens/posts/FeedScreen";
+import FullPostScreen from "src/screens/posts/FullPostScreen";
 
 export type PostsStackParamList = {
   FeedScreen: undefined;
