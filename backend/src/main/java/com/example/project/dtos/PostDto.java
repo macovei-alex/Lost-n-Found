@@ -24,5 +24,6 @@ public class PostDto {
 	private LocalDateTime resolvedAt;
 	private String mainImageName;
 	private String productLink;
+    private CoordinatesDto coordinates;
 
 }

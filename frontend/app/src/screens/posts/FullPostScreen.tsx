@@ -5,6 +5,7 @@ import { Image } from "expo-image";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { loadFullPostQO } from "src/api/options/loadFullPostQO";
+import MiniMap from "src/components/FullPostScreen/MiniMap";
 import { Button, CenteredView, ActivityIndicator, Text, TouchableOpacity } from "src/components/ui";
 import { ENV } from "src/config/env";
 import { useAuthContext } from "src/context/AuthContext";
@@ -39,10 +40,17 @@ export default function FullPostScreen() {
     );
   }
 
+  const handleLinkPress = () => {
+    if (!data.productLink) return;
+    navigate("WebViewScreen", { uri: data.productLink });
+  };
+
   return (
     <ScrollView
+      style={styles.scrollView}
       contentContainerStyle={styles.container}
       refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
+      showsVerticalScrollIndicator={false}
     >
       {/* Main Image */}
       <Image
@@ -55,13 +63,7 @@ export default function FullPostScreen() {
       <View style={styles.titleSection}>
         <Text style={styles.title}>{data.title}</Text>
         {data.productLink && (
-          <TouchableOpacity
-            onPress={() => {
-              if (!data.productLink) return;
-              navigate("WebViewScreen", { uri: data.productLink });
-            }}
-            style={styles.linkContainer}
-          >
+          <TouchableOpacity onPress={handleLinkPress} style={styles.linkContainer}>
             <Text style={styles.link}>View Product</Text>
           </TouchableOpacity>
         )}
@@ -76,12 +78,15 @@ export default function FullPostScreen() {
         <Text style={styles.value}>{data.postType}</Text>
       </View>
       <View style={styles.infoRow}>
+        <Text style={styles.label}>Posted On:</Text>
+        <Text style={styles.value}>{formatDate(data.createdAt)}</Text>
+      </View>
+      <View style={styles.infoRow}>
         <Text style={styles.label}>Location:</Text>
         <Text style={styles.value}>{data.location}</Text>
       </View>
-      <View style={styles.infoRow}>
-        <Text style={styles.label}>Posted On:</Text>
-        <Text style={styles.value}>{formatDate(data.createdAt)}</Text>
+      <View style={styles.minimapContainer}>
+        <MiniMap coordinates={data.coordinates} />
       </View>
       {data.resolvedAt && (
         <View style={styles.infoRow}>
@@ -92,22 +97,30 @@ export default function FullPostScreen() {
 
       {/* Additional Images */}
       {data.otherImages.length > 0 && (
-        <View style={styles.imagesContainer}>
-          {data.otherImages.map((img) => (
-            <Image
-              key={img.id}
-              source={{ uri: `${ENV.API_BASE_URL}/images/${img.name}` }}
-              style={styles.additionalImage}
-              contentFit="cover"
-            />
-          ))}
-        </View>
+        <>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>More images:</Text>
+          </View>
+          <View style={styles.imagesContainer}>
+            {data.otherImages.map((img) => (
+              <Image
+                key={img.id}
+                source={{ uri: `${ENV.API_BASE_URL}/images/${img.name}` }}
+                style={styles.additionalImage}
+                contentFit="cover"
+              />
+            ))}
+          </View>
+        </>
       )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
+  scrollView: {
+    backgroundColor: theme.colors.surfaceA10,
+  },
   container: {
     padding: 16,
     paddingBottom: 32,
@@ -137,7 +150,8 @@ const styles = StyleSheet.create((theme) => ({
   },
   infoRow: {
     flexDirection: "row",
-    marginBottom: 6,
+    alignItems: "center",
+    marginBottom: 12,
   },
   label: {
     fontWeight: "bold",
@@ -155,6 +169,9 @@ const styles = StyleSheet.create((theme) => ({
   },
   imagesContainer: {
     marginTop: 8,
+  },
+  minimapContainer: {
+    marginBottom: 12,
   },
   additionalImage: {
     width: "100%",

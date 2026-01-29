@@ -1,16 +1,10 @@
 package com.example.project.services;
 
-import com.example.project.database.entities.Account;
-import com.example.project.database.entities.Post;
-import com.example.project.database.entities.PostImage;
-import com.example.project.database.entities.PostType;
+import com.example.project.database.entities.*;
 import com.example.project.database.repositories.PostImageRepository;
 import com.example.project.database.repositories.PostRepository;
 import com.example.project.database.specifications.PostSpecifications;
-import com.example.project.dtos.CreatePostDto;
-import com.example.project.dtos.FullPostDto;
-import com.example.project.dtos.ImageDto;
-import com.example.project.dtos.PostDto;
+import com.example.project.dtos.*;
 import com.example.project.mappers.PostMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -24,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.naming.ServiceUnavailableException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +35,7 @@ public class PostService {
     private final PostImageRepository postImageRepository;
     private final PostMapper postMapper;
     private final ImageService imageService;
+    private final GoogleMapsApiService googleMapsApiService;
 
 
     public Page<PostDto> getActivePaged(int page, int pageSize) {
@@ -78,7 +74,9 @@ public class PostService {
     }
 
     @Transactional
-    public FullPostDto createPost(CreatePostDto createPost, Account account) throws IOException {
+    public FullPostDto createPost(CreatePostDto createPost, Account account) throws IOException, ServiceUnavailableException {
+        var googleMapsCoordinates = googleMapsApiService.getCoordinates(createPost.getLocation());
+
         List<String> newImages = new ArrayList<>();
 
         MultipartFile mainImage = createPost.getMainImage();
@@ -102,7 +100,13 @@ public class PostService {
         }
 
         List<PostImage> postImages = new ArrayList<>();
-        Post post = postMapper.mapToEntity(createPost, account, newImages.getFirst(), postImages);
+        Post post = postMapper.mapToEntity(
+                createPost,
+                account,
+                newImages.getFirst(),
+                postImages,
+                new Coordinates(googleMapsCoordinates.getLatitude(), googleMapsCoordinates.getLongitude())
+        );
 
         postImages.addAll(newImages.stream()
                 .skip(1)

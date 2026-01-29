@@ -1,6 +1,6 @@
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { createBottomTabNavigator, SceneStyleInterpolators } from "@react-navigation/bottom-tabs";
+import { StyleSheet, useUnistyles, withUnistyles } from "react-native-unistyles";
 import ChatStackNavigator from "./ChatStackNavigator";
 import PostsStackNavigator from "./PostsStackNavigator";
 import CreatePostScreen from "src/screens/CreatePostScreen";
@@ -26,9 +26,9 @@ export default function MainTabNavigator() {
           borderColor: theme.colors.surfaceA20,
           backgroundColor: theme.colors.surfaceA20,
         },
-        animation: "shift",
         tabBarActiveTintColor: String(theme.colors.primaryA0),
         tabBarInactiveTintColor: String(theme.colors.primaryA0),
+        animation: "shift",
       })}
     >
       <MainTab.Screen

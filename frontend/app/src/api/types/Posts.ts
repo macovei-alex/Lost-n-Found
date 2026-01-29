@@ -4,6 +4,12 @@ import { PageSchema } from "./Page";
 export const POST_TYPES = ["LOST", "FOUND"] as const;
 export type PostType = (typeof POST_TYPES)[number];
 
+const CoordinatesSchema = z.object({
+  latitude: z.number(),
+  longitude: z.number(),
+});
+export type Coordinates = z.infer<typeof CoordinatesSchema>;
+
 export const PostSchema = z.object({
   id: z.number(),
   idAccount: z.number(),
@@ -18,6 +24,7 @@ export const PostSchema = z.object({
     .transform((v) => (v ? new Date(v) : null)),
   mainImageName: z.string(),
   productLink: z.string().nullish(),
+  coordinates: CoordinatesSchema,
 });
 
 export const FullPostSchema = PostSchema.extend({
@@ -25,7 +32,7 @@ export const FullPostSchema = PostSchema.extend({
     z.object({
       id: z.number(),
       name: z.string(),
-    })
+    }),
   ),
 });
 

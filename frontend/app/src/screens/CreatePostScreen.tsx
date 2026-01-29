@@ -83,7 +83,7 @@ export default function CreatePostScreen() {
 
   const updateField = <K extends keyof CreatePost>(
     key: K,
-    value: CreatePost[K] | ((prev: CreatePost[K]) => CreatePost[K])
+    value: CreatePost[K] | ((prev: CreatePost[K]) => CreatePost[K]),
   ) => {
     setCreatePostData((prev) => ({
       ...prev,
@@ -159,7 +159,11 @@ export default function CreatePostScreen() {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={24}>
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.heading}>Create a Post</Text>
 
         <PostTypeSelector

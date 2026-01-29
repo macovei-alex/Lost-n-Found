@@ -1,5 +1,6 @@
 package com.example.project.dtos;
 
+import com.example.project.database.entities.Coordinates;
 import com.example.project.database.entities.PostType;
 import lombok.*;
 
@@ -25,5 +26,6 @@ public class FullPostDto {
     private String mainImageName;
     private List<Image> otherImages;
     private String productLink;
+    private CoordinatesDto coordinates;
 
 }

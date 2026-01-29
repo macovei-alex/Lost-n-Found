@@ -12,7 +12,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Post {
 
 	@Id
@@ -38,6 +37,10 @@ public class Post {
 
 	@Column(nullable = false)
 	private String location;
+
+    @Embedded
+    @Column(nullable = false)
+    private Coordinates coordinates;
 
 	@Column(nullable = false)
 	private LocalDateTime createdAt;

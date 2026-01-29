@@ -1,10 +1,8 @@
 package com.example.project.services;
 
-import com.example.project.database.entities.Account;
-import com.example.project.database.entities.Post;
-import com.example.project.database.entities.PostImage;
-import com.example.project.database.entities.PostType;
+import com.example.project.database.entities.*;
 import com.example.project.database.repositories.AccountRepository;
+import com.example.project.database.repositories.ChatRepository;
 import com.example.project.database.repositories.PostImageRepository;
 import com.example.project.database.repositories.PostRepository;
 import lombok.AllArgsConstructor;
@@ -27,6 +25,7 @@ public class EntityInitializerService {
     private final AccountRepository accountRepository;
     private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ChatRepository chatRepository;
 
 
     public static void reInitializeDatabase(EntityInitializerService entityInitializerService) {
@@ -42,7 +41,9 @@ public class EntityInitializerService {
 
     @Transactional
     public void clearDatabase() {
+        postImageRepository.deleteAll();
         postRepository.deleteAll();
+        chatRepository.deleteAll();
         accountRepository.deleteAll();
     }
 
@@ -65,39 +66,48 @@ public class EntityInitializerService {
         var account = accountRepository.findAll().getFirst();
 
         Supplier<List<Post>> postsSupplier = () -> List.of(
-                Post.builder()
-                        .account(account)
-                        .postType(PostType.LOST)
-                        .title("Lost Student ID Card")
-                        .itemDescription("Lost my student ID card somewhere near the main library. Please contact me if found.")
-                        .location("Main Library, Campus")
-                        .createdAt(LocalDateTime.now().minusDays(2))
-                        .resolvedAt(null)
-                        .mainImageName("student_id.jpeg")
-                        .productLink(null)
-                        .build(),
-                Post.builder()
-                        .account(account)
-                        .postType(PostType.LOST)
-                        .title("Lost Black Backpack")
-                        .itemDescription("Black backpack with textbooks and a laptop. Lost around the cafeteria.")
-                        .location("Campus Cafeteria")
-                        .createdAt(LocalDateTime.now().minusDays(1))
-                        .resolvedAt(null)
-                        .mainImageName("black_backpack.jpeg")
-                        .productLink(null)
-                        .build(),
-                Post.builder()
-                        .account(account)
-                        .postType(PostType.LOST)
-                        .title("Lost Blue Fountain Pen")
-                        .itemDescription("Lost a black fountain pen with gold trim. Last seen in lecture hall B during the morning class.")
-                        .location("Lecture Hall B, Campus")
-                        .createdAt(LocalDateTime.now().minusHours(5))
-                        .resolvedAt(null)
-                        .mainImageName("pen.jpeg")
-                        .productLink("https://thursdayboots.com/products/mens-perfecto-backpack-black-matte-leather?srsltid=AfmBOorkbxItBTpn363KKtF2uD5_zv06FqNg-r0BE_VwD6rH75WDtoKa")
-                        .build()
+                new Post(
+                        null,
+                        account,
+                        List.of(),
+                        PostType.LOST,
+                        "Lost Student ID Card",
+                        "Lost my student ID card somewhere near the main library. Please contact me if found.",
+                        "Main Library, Campus",
+                        new Coordinates(40.7128, -74.0060),
+                        LocalDateTime.now().minusDays(2),
+                        null,
+                        "student_id.jpeg",
+                        null
+                ),
+                new Post(
+                        null,
+                        account,
+                        List.of(),
+                        PostType.LOST,
+                        "Lost Black Backpack",
+                        "Black backpack with textbooks and a laptop. Lost around the cafeteria.",
+                        "Campus Cafeteria",
+                        new Coordinates(40.7138, -74.0070),
+                        LocalDateTime.now().minusDays(1),
+                        null,
+                        "black_backpack.jpeg",
+                        null
+                ),
+                new Post(
+                        null,
+                        account,
+                        List.of(),
+                        PostType.LOST,
+                        "Lost Blue Fountain Pen",
+                        "Lost a black fountain pen with gold trim. Last seen in lecture hall B during the morning class.",
+                        "Lecture Hall B, Campus",
+                        new Coordinates(-34.6037, -58.3816),
+                        LocalDateTime.now().minusHours(5),
+                        null,
+                        "pen.jpeg",
+                        "https://thursdayboots.com/products/mens-perfecto-backpack-black-matte-leather?srsltid=AfmBOorkbxItBTpn363KKtF2uD5_zv06FqNg-r0BE_VwD6rH75WDtoKa"
+                )
         );
 
         final int times = 4;
@@ -108,17 +118,20 @@ public class EntityInitializerService {
 
         postRepository.saveAll(duplicatedPosts);
 
-        var postWithImages = Post.builder()
-                .account(account)
-                .postType(PostType.FOUND)
-                .title("Found Laptop")
-                .itemDescription("Found a blue laptop around the sports field. Looking for the owner.")
-                .location("Sports Field, Campus")
-                .createdAt(LocalDateTime.now())
-                .resolvedAt(null)
-                .mainImageName("laptop.jpeg")
-                .productLink("https://www.microsoft.com/en-us/surface/devices/surface-laptop")
-                .build();
+        var postWithImages = new Post(
+                null,
+                account,
+                List.of(),
+                PostType.FOUND,
+                "Found Laptop",
+                "Found a blue laptop around the sports field. Looking for the owner.",
+                "Sports Field, Campus",
+                new Coordinates(24.123456, 54.123456),
+                LocalDateTime.now(),
+                null,
+                "laptop.jpeg",
+                "https://www.microsoft.com/en-us/surface/devices/surface-laptop"
+        );
         postRepository.save(postWithImages);
 
         postImageRepository.save(PostImage.builder().post(postWithImages).imageName("laptop.jpeg").build());

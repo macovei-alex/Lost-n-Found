@@ -13,7 +13,7 @@ function getSchemeSuffix(): SchemeSuffix {
       return "prod";
     default:
       throw new Error(
-        `Invalid APP_VARIANT value ( ${process.env.APP_VARIANT} ). Expected 'development', 'preview', or 'production'.`
+        `Invalid APP_VARIANT value ( ${process.env.APP_VARIANT} ). Expected 'development', 'preview', or 'production'.`,
       );
   }
 }
@@ -38,7 +38,15 @@ export default function (): ExpoConfig {
     userInterfaceStyle: "automatic",
     platforms: ["android"],
     newArchEnabled: true,
-    plugins: ["react-native-edge-to-edge"],
+    plugins: [
+      "react-native-edge-to-edge",
+      [
+        "expo-location",
+        {
+          locationAlwaysAndWhenInUsePermission: "Allow PizzeriaQ to use your location.",
+        },
+      ],
+    ],
     splash: {
       image: "./assets/splash-icon.png",
       resizeMode: "contain",
@@ -53,6 +61,12 @@ export default function (): ExpoConfig {
       predictiveBackGestureEnabled: false,
       softwareKeyboardLayoutMode: "pan",
       package: `com.lostnfound.app${withDot(schemeSuffix)}`,
+      config: {
+        googleMaps: {
+          apiKey: process.env.GOOGLE_MAPS_API_KEY,
+        },
+      },
+      googleServicesFile: "./google-services.json",
     },
   };
 }
