@@ -28,11 +28,17 @@ function buildFormData(post: CreatePost): FormData {
   form.append("postType", post.postType);
   form.append("title", post.title.trim());
   form.append("itemDescription", post.itemDescription.trim());
-  form.append("location", post.location.trim());
 
   if (post.productLink) {
     form.append("productLink", post.productLink.trim());
   }
+
+  form.append("location", post.location.trim());
+  if (!post.coordinates) {
+    throw new Error("Coordinates are required");
+  }
+  form.append("latitude", post.coordinates.latitude.toString());
+  form.append("longitude", post.coordinates.longitude.toString());
 
   if (post.mainImage) {
     form.append("mainImage", {

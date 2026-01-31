@@ -1,6 +1,7 @@
 package com.example.project.dtos;
 
 import com.example.project.database.entities.PostType;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -19,6 +20,10 @@ public class CreatePostDto {
     private String location;
     @NotBlank
     private String productLink;
+    @NotNull
+    private Double latitude;
+    @NotNull
+    private Double longitude;
     @NotNull
     private MultipartFile mainImage;
     private List<MultipartFile> otherImages = List.of();

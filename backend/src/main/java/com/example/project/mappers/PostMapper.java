@@ -63,8 +63,7 @@ public class PostMapper {
             CreatePostDto createPostDto,
             Account account,
             String mainImageName,
-            List<PostImage> postImages,
-            Coordinates coordinates
+            List<PostImage> postImages
     ) {
         if (createPostDto == null) {
             return null;
@@ -77,7 +76,7 @@ public class PostMapper {
                 createPostDto.getTitle(),
                 createPostDto.getItemDescription(),
                 createPostDto.getLocation(),
-                coordinates,
+                new Coordinates(createPostDto.getLatitude(), createPostDto.getLongitude()),
                 LocalDateTime.now(),
                 null,
                 mainImageName,

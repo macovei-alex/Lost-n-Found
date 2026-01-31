@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.Map;
 
@@ -56,6 +57,13 @@ public class ExceptionInterceptor {
     })
     public ResponseEntity<Map<String, Object>> handleValidationException(Exception e, WebRequest request) {
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        Map<String, Object> body = exceptionResponseBuilder.build(status, e.getMessage(), request);
+        return new ResponseEntity<>(body, status);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleMaxUploadSizeExceededException(Exception e, WebRequest request) {
+        HttpStatus status = HttpStatus.PAYLOAD_TOO_LARGE;
         Map<String, Object> body = exceptionResponseBuilder.build(status, e.getMessage(), request);
         return new ResponseEntity<>(body, status);
     }

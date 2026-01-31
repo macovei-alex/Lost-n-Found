@@ -18,13 +18,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.naming.ServiceUnavailableException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.example.project.helper.Helper.isUrl;
 
 @Slf4j
 @Service
@@ -74,9 +75,7 @@ public class PostService {
     }
 
     @Transactional
-    public FullPostDto createPost(CreatePostDto createPost, Account account) throws IOException, ServiceUnavailableException {
-        var googleMapsCoordinates = googleMapsApiService.getCoordinates(createPost.getLocation());
-
+    public FullPostDto createPost(CreatePostDto createPost, Account account) throws IOException {
         List<String> newImages = new ArrayList<>();
 
         MultipartFile mainImage = createPost.getMainImage();
@@ -104,9 +103,12 @@ public class PostService {
                 createPost,
                 account,
                 newImages.getFirst(),
-                postImages,
-                new Coordinates(googleMapsCoordinates.getLatitude(), googleMapsCoordinates.getLongitude())
+                postImages
         );
+
+        if (!isUrl(post.getProductLink())) {
+            post.setProductLink(null);
+        }
 
         postImages.addAll(newImages.stream()
                 .skip(1)

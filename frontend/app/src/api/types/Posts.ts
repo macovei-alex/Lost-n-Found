@@ -49,13 +49,14 @@ export type CreatePost = {
   postType: PostType;
   title: string;
   itemDescription: string;
-  location: string;
   mainImage: {
     uri: string;
     name: string;
     mimeType?: string;
   } | null;
   productLink?: string;
+  location: string;
+  coordinates: Coordinates | null;
   otherImages: {
     uri: string;
     name: string;

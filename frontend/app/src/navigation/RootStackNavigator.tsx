@@ -1,13 +1,15 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import MainTabNavigator from "src/navigation/MainTabNavigator";
+import MainTabNavigator, { MainTabParamList } from "src/navigation/MainTabNavigator";
 import WebViewScreen from "src/screens/WebViewScreen";
 import MapScreen from "src/screens/MapScreen";
+import { NavigatorScreenParams } from "@react-navigation/native";
+import { Coordinates } from "src/api/types/Posts";
 
 export type RootStackParamList = {
-  MainTabNavigator: undefined;
+  MainTabNavigator: NavigatorScreenParams<MainTabParamList>;
   WebViewScreen: { uri: string };
-  MapScreen: undefined;
+  MapScreen: { initialCoordinates: Coordinates } | undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();

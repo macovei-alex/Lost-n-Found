@@ -6,3 +6,5 @@ export * from "./TouchableOpacity";
 export * from "./UserAvatar";
 export * from "./SelectModal";
 export * from "./PageHeader";
+export * from "./MapMarker";
+export * from "./MiniMap";

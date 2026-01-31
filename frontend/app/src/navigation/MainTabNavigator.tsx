@@ -1,15 +1,16 @@
 import React from "react";
-import { createBottomTabNavigator, SceneStyleInterpolators } from "@react-navigation/bottom-tabs";
-import { StyleSheet, useUnistyles, withUnistyles } from "react-native-unistyles";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import ChatStackNavigator from "./ChatStackNavigator";
 import PostsStackNavigator from "./PostsStackNavigator";
 import CreatePostScreen from "src/screens/CreatePostScreen";
 import { Ionicons } from "@expo/vector-icons";
 import ProfileStackNavigator from "./ProfileStackNavigator";
+import { Coordinates } from "src/api/types/Posts";
 
 export type MainTabParamList = {
   PostsStackNavigator: undefined;
-  CreatePostScreen: undefined;
+  CreatePostScreen: { coordinates: Coordinates } | undefined;
   Chat: undefined;
 };
 

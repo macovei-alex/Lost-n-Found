@@ -1,10 +1,16 @@
 import React, { useMemo, useState } from "react";
 import { Alert, KeyboardAvoidingView, ScrollView } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
-import { Text } from "src/components/ui";
+import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import { MiniMap, Text, TouchableOpacity } from "src/components/ui";
 import { CreatePost } from "src/api/types/Posts";
 import { useAuthContext } from "src/context/AuthContext";
-import { useNavigation } from "@react-navigation/native";
+import {
+  CompositeNavigationProp,
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { NativeBottomTabNavigationProp } from "@react-navigation/bottom-tabs/unstable";
 import { MainTabParamList } from "src/navigation/MainTabNavigator";
 import * as ImagePicker from "expo-image-picker";
@@ -14,8 +20,18 @@ import MainImageSection from "src/components/CreatePost/MainImageSection";
 import OtherImagesSection from "src/components/CreatePost/OtherImagesSection";
 import SubmitSection from "src/components/CreatePost/SubmitSection";
 import { useCreatePostMutation } from "src/api/mutations/useCreatePostMutation";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "src/navigation/RootStackNavigator";
+import MapView from "react-native-maps";
+import { FontAwesome } from "@expo/vector-icons";
+import { MapMarker } from "src/components/ui";
 
-type NavigationProps = NativeBottomTabNavigationProp<MainTabParamList, "CreatePostScreen">;
+type NavigationProps = CompositeNavigationProp<
+  NativeBottomTabNavigationProp<MainTabParamList, "CreatePostScreen">,
+  NativeStackNavigationProp<RootStackParamList>
+>;
+
+type RouteProps = RouteProp<MainTabParamList, "CreatePostScreen">;
 
 type SelectedImage = {
   uri: string;
@@ -27,9 +43,10 @@ const initialState: CreatePost = {
   postType: "LOST",
   title: "",
   itemDescription: "",
-  location: "",
   mainImage: null,
   productLink: "",
+  location: "",
+  coordinates: null,
   otherImages: [],
 };
 
@@ -48,22 +65,23 @@ const TEXT_FIELDS: TextFieldConfig[] = [
     numberOfLines: 4,
   },
   {
-    key: "location",
-    label: "Location",
-    placeholder: "Campus library, Cafeteria, etc.",
-    autoCapitalize: "sentences",
-  },
-  {
     key: "productLink",
     label: "Product Link (optional)",
     placeholder: "https://...",
     autoCapitalize: "none",
     keyboardType: "url",
   },
+  {
+    key: "location",
+    label: "Location Alias",
+    placeholder: "Campus library, Cafeteria, etc.",
+    autoCapitalize: "sentences",
+  },
 ];
 
 export default function CreatePostScreen() {
   const navigation = useNavigation<NavigationProps>();
+  const params = useRoute<RouteProps>().params;
   const { api } = useAuthContext();
 
   const createPostMutation = useCreatePostMutation(api);
@@ -71,11 +89,25 @@ export default function CreatePostScreen() {
   const [createPostData, setCreatePostData] = useState<CreatePost>(initialState);
   const [error, setError] = useState<string | null>(null);
 
+  useFocusEffect(() => {
+    if (
+      !!params?.coordinates &&
+      (params.coordinates.latitude !== createPostData.coordinates?.latitude ||
+        params.coordinates.longitude !== createPostData.coordinates?.longitude)
+    ) {
+      setCreatePostData((prev) => ({
+        ...prev,
+        coordinates: params.coordinates,
+      }));
+    }
+  });
+
   const isValid = useMemo(() => {
     return (
       createPostData.title.trim().length > 0 &&
       createPostData.itemDescription.trim().length > 0 &&
       createPostData.location.trim().length > 0 &&
+      !!createPostData.coordinates &&
       !!createPostData.mainImage &&
       createPostData.otherImages.length <= 5
     );
@@ -179,6 +211,20 @@ export default function CreatePostScreen() {
           }
         />
 
+        {createPostData.coordinates && <MiniMap coordinates={createPostData.coordinates} />}
+
+        <TouchableOpacity
+          style={{ opacity: createPostData.coordinates ? 0.7 : 1 }}
+          onPress={() => {
+            navigation.navigate(
+              "MapScreen",
+              createPostData.coordinates ? { initialCoordinates: createPostData.coordinates } : undefined,
+            );
+          }}
+        >
+          <Text style={styles.coordinatesButtonText}>Pick the spot on the map</Text>
+        </TouchableOpacity>
+
         <MainImageSection
           selectedImageName={createPostData.mainImage?.name ?? null}
           onPickImage={() => pickImages("main")}
@@ -202,6 +248,14 @@ export default function CreatePostScreen() {
   );
 }
 
+const UMapView = withUnistyles(MapView, (theme) => ({
+  userInterfaceStyle: theme.name,
+}));
+
+const UFontAwesome = withUnistyles(FontAwesome, (theme) => ({
+  color: theme.colors.primaryA0,
+}));
+
 const styles = StyleSheet.create((theme) => ({
   container: {
     minHeight: "100%",
@@ -215,5 +269,9 @@ const styles = StyleSheet.create((theme) => ({
     fontWeight: "700",
     color: theme.colors.primaryA10,
     marginBottom: 8,
+  },
+  coordinatesButtonText: {
+    color: theme.colors.textOpposite,
+    fontWeight: "600",
   },
 }));

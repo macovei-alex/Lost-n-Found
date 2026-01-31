@@ -6,7 +6,7 @@ import { Alert, RefreshControl, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { useResolvePostMutation } from "src/api/mutations/useResolvePostMutation";
 import { loadFullPostQO } from "src/api/options/loadFullPostQO";
-import { Button, CenteredView, ActivityIndicator, Text, TouchableOpacity } from "src/components/ui";
+import { Button, CenteredView, ActivityIndicator, Text, TouchableOpacity, MiniMap } from "src/components/ui";
 import { ENV } from "src/config/env";
 import { useAuthContext } from "src/context/AuthContext";
 import { ProfileStackParamList } from "src/navigation/ProfileStackNavigator";
@@ -104,6 +104,8 @@ export default function MyFullPostScreen() {
         <Text style={styles.label}>Posted On:</Text>
         <Text style={styles.value}>{formatDate(postQuery.data.createdAt)}</Text>
       </View>
+
+      <MiniMap coordinates={postQuery.data.coordinates} />
 
       {postQuery.data.resolvedAt && (
         <View style={styles.infoRow}>
