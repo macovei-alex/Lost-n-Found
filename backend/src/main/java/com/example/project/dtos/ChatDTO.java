@@ -14,4 +14,5 @@ public class ChatDTO {
     private Integer account1Id;
     private Integer account2Id;
     private LocalDateTime createdAt;
+    private String otherUserName;
 }

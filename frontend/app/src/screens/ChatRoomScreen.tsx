@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -10,23 +10,79 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ChatStackParamList } from "src/navigation/ChatStackNavigator";
+import { useAuthContext } from "src/context/AuthContext";
+
+type Message = { id: string; textContent: string; sentByMe: boolean };
 
 type Props = NativeStackScreenProps<ChatStackParamList, "ChatRoomScreen">;
 
 export default function ChatRoomScreen({ route }: Props) {
   const { chatId, chatTitle } = route.params;
-  const [messages, setMessages] = useState<
-    { id: string; text: string; sentByMe: boolean }[]
-  >([]);
+  const { api } = useAuthContext();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
-  const sendMessage = () => {
-    if (!input.trim()) return;
-    setMessages((prev) => [
-      ...prev,
-      { id: Date.now().toString(), text: input, sentByMe: true },
-    ]);
-    setInput("");
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const meResponse = await api("/accounts/me");
+        const meData = await meResponse.json();
+        setCurrentUserId(meData.id);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchCurrentUser();
+  }, []);
+
+  const fetchMessages = async () => {
+    if (!currentUserId) return;
+    try {
+      const response = await api(`/chats/${chatId}/messages`);
+      const data = await response.json();
+      setMessages(
+        data.map((msg: any) => ({
+          id: msg.id.toString(),
+          textContent: msg.textContent,
+          sentByMe: msg.senderId === currentUserId,
+        })),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUserId) {
+      fetchMessages();
+      const interval = setInterval(fetchMessages, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [currentUserId]);
+
+  const sendMessage = async () => {
+    if (!input.trim() || !currentUserId) return;
+    try {
+      const response = await api(
+        `/chats/${chatId}/send?senderId=${currentUserId}&text=${encodeURIComponent(
+          input,
+        )}`,
+        { method: "POST" },
+      );
+      const data = await response.json();
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: data.id.toString(),
+          textContent: data.textContent,
+          sentByMe: true,
+        },
+      ]);
+      setInput("");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -42,7 +98,7 @@ export default function ChatRoomScreen({ route }: Props) {
               item.sentByMe ? styles.sent : styles.received,
             ]}
           >
-            <Text style={styles.messageText}>{item.text}</Text>
+            <Text style={styles.messageText}>{item.textContent}</Text>
           </View>
         )}
       />

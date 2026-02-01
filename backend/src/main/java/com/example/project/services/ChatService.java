@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +28,17 @@ public class ChatService {
         return chatRepository.save(chat);
     }
 
-    public List<Chat> getChatsForAccount(Account account) {
-        return chatRepository.findByAccount1OrAccount2(account, account);
+    public Optional<Chat> getChatById(Integer chatId) {
+        return chatRepository.findById(chatId);
+    }
+
+    public Chat getOrCreateChat(Account account1, Account account2) {
+        if (account1.getId().equals(account2.getId())) {
+            throw new RuntimeException("You can't send message to yourself");
+        }
+        return chatRepository.findByAccount1AndAccount2(account1, account2)
+                .or(() -> chatRepository.findByAccount1AndAccount2(account2, account1))
+                .orElseGet(() -> createChat(account1, account2));
     }
 
     public Message sendMessage(Chat chat, Account sender, String textContent) {
@@ -37,6 +48,7 @@ public class ChatService {
                 .textContent(textContent)
                 .isRead(false)
                 .sentAt(LocalDateTime.now())
+                .images(new ArrayList<>())
                 .build();
         return messageRepository.save(message);
     }
@@ -45,9 +57,7 @@ public class ChatService {
         return messageRepository.findByChatOrderBySentAtAsc(chat);
     }
 
-    public Chat getOrCreateChat(Account account1, Account account2) {
-        return chatRepository.findByAccount1AndAccount2(account1, account2)
-                .or(() -> chatRepository.findByAccount1AndAccount2(account2, account1))
-                .orElseGet(() -> createChat(account1, account2));
+    public List<Chat> getChatsForAccount(Account account) {
+        return chatRepository.findByAccount1OrAccount2(account, account);
     }
 }

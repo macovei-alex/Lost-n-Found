@@ -44,6 +44,10 @@ public class Account implements UserDetails {
 
 	private String profileImageName;
 
+    public String getDisplayName() {
+        return this.name;
+    }
+
     @PrePersist
     protected void onCreate() {
         if (this.createdAt == null) {

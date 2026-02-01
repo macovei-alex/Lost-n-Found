@@ -7,16 +7,18 @@ import com.example.project.dtos.ChatDTO;
 import com.example.project.dtos.MessageDTO;
 import com.example.project.dtos.MessageImageDTO;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ChatMapper {
 
-    public static ChatDTO toDTO(Chat chat) {
+    public static ChatDTO toDTO(Chat chat, String otherUserName) {
         return new ChatDTO(
                 chat.getId(),
                 chat.getAccount1().getId(),
                 chat.getAccount2().getId(),
-                chat.getCreatedAt()
+                chat.getCreatedAt(),
+                otherUserName
         );
     }
 
@@ -26,11 +28,12 @@ public class ChatMapper {
                 message.getChat().getId(),
                 message.getSender().getId(),
                 message.getTextContent(),
-                message.isRead(),
                 message.getSentAt(),
-                message.getImages().stream()
+                message.getImages() != null
+                        ? message.getImages().stream()
                         .map(ChatMapper::toDTO)
                         .collect(Collectors.toList())
+                        : List.of()
         );
     }
 

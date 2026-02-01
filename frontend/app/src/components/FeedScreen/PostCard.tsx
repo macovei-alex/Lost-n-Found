@@ -8,10 +8,7 @@ import { useAuthContext } from "src/context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 
-type PostCardProps = {
-  post: Post;
-  onNavigate?: () => void;
-};
+type PostCardProps = { post: Post; onNavigate?: () => void };
 
 export default function PostCard({ post, onNavigate }: PostCardProps) {
   const { api } = useAuthContext();
@@ -25,10 +22,25 @@ export default function PostCard({ post, onNavigate }: PostCardProps) {
       const meResponse = await api("/accounts/me");
       const currentUser = await meResponse.json();
       const currentUserId = currentUser.id;
+
+      console.warn(
+        "currentUserId:",
+        currentUserId,
+        "post.idAccount:",
+        post.idAccount,
+      );
+
+      if (currentUserId === post.idAccount) {
+        console.warn("You can't send message to yourself");
+        setLoading(false);
+        return;
+      }
+
       const chatResponse = await api(
-        `/chats/get-or-create?account1Id=${currentUserId}&account2Id=${post.idAccount}`
+        `/chats/get-or-create?account1Id=${currentUserId}&account2Id=${post.idAccount}`,
       );
       const chat = await chatResponse.json();
+
       navigation.navigate("Chat", {
         screen: "ChatRoomScreen",
         params: { chatId: chat.id, chatTitle: post.title },

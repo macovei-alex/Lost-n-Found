@@ -15,7 +15,6 @@ public class MessageDTO {
     private Integer chatId;
     private Integer senderId;
     private String textContent;
-    private boolean isRead;
     private LocalDateTime sentAt;
     private List<MessageImageDTO> images;
 }
