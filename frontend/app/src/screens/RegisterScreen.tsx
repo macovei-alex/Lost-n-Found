@@ -5,12 +5,12 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet,
 } from "react-native";
 import { useAuthContext } from "src/context/AuthContext";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginStackParamList } from "src/navigation/LoginStackNavigator";
 import { ENV } from "src/config/env";
+import { StyleSheet } from "react-native-unistyles";
 
 type Props = NativeStackScreenProps<LoginStackParamList, "RegisterScreen">;
 
@@ -130,12 +130,17 @@ export default function RegisterScreen({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+const styles = StyleSheet.create((theme) => ({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: theme.colors.surfaceA0,
+  },
   card: {
     width: "90%",
     padding: 24,
-    backgroundColor: "#fff",
+    backgroundColor: theme.colors.surfaceA10,
     borderRadius: 16,
   },
   title: {
@@ -143,26 +148,39 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 16,
     textAlign: "center",
+    color: theme.colors.primaryA10,
   },
-  error: { color: "red", textAlign: "center", marginBottom: 12 },
+  error: {
+    color: theme.colors.dangerA10,
+    textAlign: "center",
+    marginBottom: 12,
+  },
   input: {
     height: 48,
-    backgroundColor: "#EEE",
+    backgroundColor: theme.colors.surfaceA20,
     borderRadius: 8,
     marginBottom: 14,
     paddingHorizontal: 12,
+    color: theme.colors.text,
   },
   button: {
-    backgroundColor: "#0066FF",
+    backgroundColor: theme.colors.primaryA10,
     paddingVertical: 14,
     borderRadius: 10,
   },
   buttonText: {
-    color: "#fff",
+    color: theme.colors.textOpposite,
     textAlign: "center",
     fontWeight: "600",
     fontSize: 18,
   },
-  footerText: { textAlign: "center", marginTop: 16 },
-  link: { color: "#0066FF", fontWeight: "600" },
-});
+  footerText: {
+    textAlign: "center",
+    marginTop: 16,
+    color: theme.colors.text,
+  },
+  link: {
+    color: theme.colors.primaryA10,
+    fontWeight: "600",
+  },
+}));
