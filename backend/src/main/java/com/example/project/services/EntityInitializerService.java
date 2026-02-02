@@ -59,16 +59,27 @@ public class EntityInitializerService {
                 .createdAt(LocalDateTime.now())
                 .build()
         );
+        accountRepository.save(Account.builder()
+                .posts(List.of())
+                .chats(List.of())
+                .name("Jane Smith")
+                .email("jane.smith@email.com")
+                .passwordHash(passwordEncoder.encode("password123"))
+                .phoneNumber("098 765 4321")
+                .createdAt(LocalDateTime.now())
+                .build()
+        );
     }
 
     @Transactional
     public void createItemPosts() {
-        var account = accountRepository.findAll().getFirst();
+        var account1 = accountRepository.findAll().getFirst();
+        var account2 = accountRepository.findAll().get(1);
 
         Supplier<List<Post>> postsSupplier = () -> List.of(
                 new Post(
                         null,
-                        account,
+                        account1,
                         List.of(),
                         PostType.LOST,
                         "Lost Student ID Card",
@@ -82,7 +93,7 @@ public class EntityInitializerService {
                 ),
                 new Post(
                         null,
-                        account,
+                        account2,
                         List.of(),
                         PostType.LOST,
                         "Lost Black Backpack",
@@ -96,7 +107,7 @@ public class EntityInitializerService {
                 ),
                 new Post(
                         null,
-                        account,
+                        account2,
                         List.of(),
                         PostType.LOST,
                         "Lost Blue Fountain Pen",
@@ -120,7 +131,7 @@ public class EntityInitializerService {
 
         var postWithImages = new Post(
                 null,
-                account,
+                account2,
                 List.of(),
                 PostType.FOUND,
                 "Found Laptop",

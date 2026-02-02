@@ -137,7 +137,7 @@ export default function MyFullPostScreen() {
 
 const styles = StyleSheet.create((theme) => ({
   container: {
-    padding: 16,
+    paddingHorizontal: 16,
     paddingBottom: 32,
     backgroundColor: theme.colors.surfaceA10,
     minHeight: "100%",

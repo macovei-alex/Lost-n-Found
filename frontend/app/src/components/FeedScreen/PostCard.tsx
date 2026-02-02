@@ -1,43 +1,37 @@
 import { Image } from "expo-image";
-import { GestureResponderEvent, Pressable } from "react-native";
+import { Alert, GestureResponderEvent, Pressable, View } from "react-native";
 import { Text, Button } from "src/components/ui";
 import { StyleSheet } from "react-native-unistyles";
 import { Post } from "src/api/types/Posts";
 import { ENV } from "src/config/env";
 import { useAuthContext } from "src/context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { loadMeInformationQO } from "src/api/options/loadMeInformationQO";
 
 type PostCardProps = { post: Post; onNavigate?: () => void };
 
 export default function PostCard({ post, onNavigate }: PostCardProps) {
-  const { api } = useAuthContext();
+  const { api, token } = useAuthContext();
   const navigation = useNavigation<any>();
-  const [loading, setLoading] = useState(false);
+  const meQuery = useQuery(loadMeInformationQO(api, token));
 
-  const handleChatPress = async (event: GestureResponderEvent) => {
-    event.stopPropagation();
-    setLoading(true);
+  const handleChatPress = async () => {
+    if (!meQuery.data) {
+      console.warn("User information not loaded yet");
+      return;
+    }
+
+    const currentAccount = meQuery.data;
+    if (currentAccount.id === post.idAccount) {
+      console.warn("You can't send message to yourself");
+      Alert.alert("Circular messaging", "You can't send message to yourself.");
+      return;
+    }
+
     try {
-      const meResponse = await api("/accounts/me");
-      const currentUser = await meResponse.json();
-      const currentUserId = currentUser.id;
-
-      console.warn(
-        "currentUserId:",
-        currentUserId,
-        "post.idAccount:",
-        post.idAccount,
-      );
-
-      if (currentUserId === post.idAccount) {
-        console.warn("You can't send message to yourself");
-        setLoading(false);
-        return;
-      }
-
       const chatResponse = await api(
-        `/chats/get-or-create?account1Id=${currentUserId}&account2Id=${post.idAccount}`,
+        `/chats/get-or-create?account1Id=${currentAccount.id}&account2Id=${post.idAccount}`,
       );
       const chat = await chatResponse.json();
 
@@ -47,28 +41,28 @@ export default function PostCard({ post, onNavigate }: PostCardProps) {
       });
     } catch (err) {
       console.error("Error creating chat:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <Pressable style={styles.postCard} onPress={onNavigate}>
-      <Text style={styles.title}>{post.title}</Text>
-      <Text style={styles.description}>{post.itemDescription}</Text>
-      <Text style={styles.location}>{post.location}</Text>
-      <Image
-        source={{ uri: `${ENV.API_BASE_URL}/images/${post.mainImageName}` }}
-        style={styles.image}
-        contentFit="contain"
-      />
+    <View style={styles.postCard}>
+      <Pressable onPress={onNavigate}>
+        <Text style={styles.title}>{post.title}</Text>
+        <Text style={styles.description}>{post.itemDescription}</Text>
+        <Text style={styles.location}>{post.location}</Text>
+        <Image
+          source={{ uri: `${ENV.API_BASE_URL}/images/${post.mainImageName}` }}
+          style={styles.image}
+          contentFit="contain"
+        />
+      </Pressable>
       <Button
-        title="Message Seller"
+        title="Message author"
         onPress={handleChatPress}
-        disabled={loading}
+        disabled={meQuery.isLoading || meQuery.isError}
         style={styles.messageButton}
       />
-    </Pressable>
+    </View>
   );
 }
 

@@ -116,14 +116,14 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, runtime) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.surfaceA0,
   },
   contentContainer: {
     padding: 20,
-    paddingTop: 40,
+    paddingTop: runtime.statusBar.height + 10,
   },
   avatarSection: {
     alignItems: "center",

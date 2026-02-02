@@ -15,6 +15,10 @@ public class PostSpecifications {
         return (root, _, cb) -> cb.equal(root.get("account").get("id"), accountId);
     }
 
+    public static Specification<Post> notOwnedBy(Integer accountId) {
+        return (root, _, cb) -> cb.notEqual(root.get("account").get("id"), accountId);
+    }
+
     public static Specification<Post> hasType(PostType postType) {
         return (root, _, cb) -> cb.equal(root.get("postType"), postType);
     }

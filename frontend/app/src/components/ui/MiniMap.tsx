@@ -2,7 +2,7 @@ import { View } from "react-native";
 import MapView from "react-native-maps";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { Coordinates } from "src/api/types/Posts";
-import { MapMarker } from ".";
+import { MapMarker } from "./MapMarker";
 
 type MiniMapProps = {
   coordinates: Coordinates;

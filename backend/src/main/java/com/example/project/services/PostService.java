@@ -36,11 +36,12 @@ public class PostService {
     private final PostImageRepository postImageRepository;
     private final PostMapper postMapper;
     private final ImageService imageService;
-    private final GoogleMapsApiService googleMapsApiService;
 
 
-    public Page<PostDto> getActivePaged(int page, int pageSize) {
-        var spec = PostSpecifications.isNotResolved();
+    public Page<PostDto> getFeedPaged(int page, int pageSize) {
+        var account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var spec = PostSpecifications.isNotResolved()
+                .and(PostSpecifications.notOwnedBy(account.getId()));
         var pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
         return postRepository.findAll(spec, pageable).map(postMapper::mapToSimplePostDto);
     }

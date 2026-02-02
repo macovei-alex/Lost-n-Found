@@ -28,8 +28,8 @@ public class PostController {
 
 
 	@GetMapping
-	public Page<PostDto> getAllPaged(@RequestParam int page, @RequestParam int pageSize) {
-		return postService.getActivePaged(page, pageSize);
+	public Page<PostDto> getFeedPaged(@RequestParam int page, @RequestParam int pageSize) {
+		return postService.getFeedPaged(page, pageSize);
 	}
 
     @GetMapping("/{postId}")
@@ -44,7 +44,6 @@ public class PostController {
             @RequestParam Optional<PostType> postType,
             @RequestParam Optional<Boolean> resolved
     ) {
-        System.out.println(postType);
         return postService.getAllMyPostsPaged(page, pageSize, postType, resolved);
     }
 

@@ -22,9 +22,6 @@ import SubmitSection from "src/components/CreatePost/SubmitSection";
 import { useCreatePostMutation } from "src/api/mutations/useCreatePostMutation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "src/navigation/RootStackNavigator";
-import MapView from "react-native-maps";
-import { FontAwesome } from "@expo/vector-icons";
-import { MapMarker } from "src/components/ui";
 
 type NavigationProps = CompositeNavigationProp<
   NativeBottomTabNavigationProp<MainTabParamList, "CreatePostScreen">,
@@ -248,19 +245,11 @@ export default function CreatePostScreen() {
   );
 }
 
-const UMapView = withUnistyles(MapView, (theme) => ({
-  userInterfaceStyle: theme.name,
-}));
-
-const UFontAwesome = withUnistyles(FontAwesome, (theme) => ({
-  color: theme.colors.primaryA0,
-}));
-
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, runtime) => ({
   container: {
     minHeight: "100%",
     padding: 20,
-    paddingTop: 36,
+    paddingTop: runtime.statusBar.height + 10,
     backgroundColor: theme.colors.surfaceA0,
     gap: 10,
   },

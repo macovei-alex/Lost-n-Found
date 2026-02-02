@@ -29,6 +29,8 @@ export function Button(props: ButtonProps) {
 const styles = StyleSheet.create((theme) => ({
   container: (disabled?: boolean) => ({
     backgroundColor: theme.colors.primaryA0,
+    justifyContent: "center",
+    alignItems: "center",
     opacity: disabled ? 0.6 : 1,
   }),
   text: {

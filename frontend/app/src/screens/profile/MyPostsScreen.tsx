@@ -103,7 +103,6 @@ const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.surfaceA0,
-    paddingTop: 12,
   },
   listStyle: {
     flexGrow: 0,
